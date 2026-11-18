@@ -16,7 +16,8 @@
   :root {
     --bg: #f3f6f5; --card: #ffffff; --fg: #14221e; --muted: #5d6f69; --line: #d8e2de; --accent: #0f7a66; --accent-bg: #dcefe9;
     --warn: #9a5b00; --bad: #b3261e;
-    --t1: #0f7a66; --t2: #c2603a; --t3: #3a6fb5; --t4: #8a5cc2; --t5: #b5822a;
+    --t1: #0f7a66; --t2: #c2603a; --t3: #3a6fb5; --t4: #8a5cc2; --t5: #b5822a; --t6: #4f8a2e; --t7: #c0392b;
+    --ok: #3f9a4a; --no: #c0392b; --sea: #2f7fc4; --info: #8a8f8c;
     --font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
     color-scheme: light;
   }
@@ -24,7 +25,8 @@
     :root {
       --bg: #0e1513; --card: #17211e; --fg: #e8f0ed; --muted: #93a7a0; --line: #2a3833; --accent: #3cc5a6; --accent-bg: #143229;
       --warn: #e0a54a; --bad: #ff8a80;
-      --t1: #3cc5a6; --t2: #f08a62; --t3: #6fa3eb; --t4: #b590f0; --t5: #e6b45a;
+      --t1: #3cc5a6; --t2: #f08a62; --t3: #6fa3eb; --t4: #b590f0; --t5: #e6b45a; --t6: #8fcf68; --t7: #ff7a6b;
+      --ok: #6fcf7a; --no: #ff7a6b; --sea: #6fb0f0; --info: #93a7a0;
       color-scheme: dark;
     }
   }
@@ -114,9 +116,35 @@
 
   /* Sätze */
   .phrases { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 14px; }
-  .phrase { text-align: left; background: transparent; border: 0; border-top: 1px solid var(--line); padding: 12px 16px; cursor: pointer; color: var(--fg); display: flex; flex-direction: column; gap: 2px; }
-  .phrase:first-child { border-top: 0; }
+  .prow { display: flex; align-items: stretch; border-top: 1px solid var(--line); }
+  .prow:first-child { border-top: 0; }
+  .phrase { flex: 1; min-width: 0; text-align: left; background: transparent; border: 0; padding: 12px 8px 12px 16px; cursor: pointer; color: var(--fg); display: flex; flex-direction: column; gap: 2px; }
   .phrase:active { background: var(--accent-bg); }
+  .spk { flex: none; width: 52px; border: 0; background: transparent; color: var(--accent); cursor: pointer; display: grid; place-items: center; }
+  .spk svg { width: 22px; height: 22px; }
+  .spk:active { background: var(--accent-bg); }
+  #voiceHint { border-color: var(--warn); }
+
+  /* Speisekarte */
+  .search { width: 100%; font: 400 1.05rem var(--font); color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; outline: none; }
+  .search:focus { border-color: var(--accent); }
+  .words { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+  .word { text-align: left; border: 1px solid var(--line); border-left: 4px solid var(--k); background: var(--card); color: var(--fg); border-radius: 10px; padding: 9px 10px; cursor: pointer; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .word .vi { font-weight: 700; font-size: 1.02rem; overflow-wrap: anywhere; }
+  .word .de { font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
+  .word.wide { grid-column: 1 / -1; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.85rem; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; background: var(--k); }
+
+  /* Notfall */
+  .sos-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .sos-num { text-decoration: none; text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 6px; color: var(--fg); display: flex; flex-direction: column; gap: 2px; }
+  .sos-num b { font-size: 1.6rem; color: var(--bad); font-variant-numeric: tabular-nums; }
+  .sos-num span { font-size: 0.82rem; color: var(--muted); }
+  .contact { display: flex; flex-direction: column; gap: 4px; font-size: 0.95rem; line-height: 1.4; }
+  .contact b { font-size: 1.02rem; }
+  .contact a { color: var(--accent); text-decoration: none; font-weight: 500; font-variant-numeric: tabular-nums; }
   .phrase .vi { font-size: 1.08rem; font-weight: 600; line-height: 1.35; }
   .phrase .de { font-size: 0.85rem; color: var(--muted); line-height: 1.35; }
 
@@ -132,6 +160,8 @@
   #show.price .s-vi { font-size: clamp(3rem, 17vw, 7rem); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
   #show.long .s-vi { font-size: clamp(1.6rem, 7vw, 2.4rem); }
   #show .s-de { font-size: 1rem; color: var(--muted); max-width: 32ch; }
+  #show .s-say { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 1rem; color: var(--accent); background: var(--accent-bg); border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; }
+  #show .s-say svg { width: 20px; height: 20px; }
   #show .s-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(16px, env(safe-area-inset-right, 0px)); font-size: 0.9rem; color: var(--muted); }
 
   /* Ausgaben */
@@ -189,11 +219,19 @@
       </button>
       <button type="button" class="tile" data-go="phr" style="--c:var(--t4)">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg></span>
-        <span class="tx"><span class="tt">Sätze</span><span class="ts">Vegetarisch, Essen, Handeln</span></span>
+        <span class="tx"><span class="tt">Sätze</span><span class="ts">Vegetarisch, Kaffee, Handeln</span></span>
+      </button>
+      <button type="button" class="tile" data-go="menu" style="--c:var(--t6)">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 0 1 3 3v15H8a3 3 0 0 1-3-3z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
+        <span class="tx"><span class="tt">Speisekarte</span><span class="ts">Was ist drin?</span></span>
       </button>
       <button type="button" class="tile" data-go="exp" style="--c:var(--t5)">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>
         <span class="tx"><span class="tt">Ausgaben</span><span class="ts" id="tileExp"></span></span>
+      </button>
+      <button type="button" class="tile" data-go="sos" style="--c:var(--t7)">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+        <span class="tx"><span class="tt">Notfall</span><span class="ts">113 · 114 · 115</span></span>
       </button>
     </div>
   </section>
@@ -282,8 +320,56 @@
   <section id="v-phr" hidden>
     <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
     <h1>Sätze</h1>
-    <p class="hint">Satz antippen, um ihn groß zu zeigen. Nochmal tippen schließt.</p>
+    <p class="hint">Satz antippen, um ihn groß zu zeigen. Mit dem Lautsprecher liest das iPhone ihn auf Vietnamesisch vor.</p>
+    <div class="tip" id="voiceHint" hidden>
+      <strong>Keine vietnamesische Stimme gefunden.</strong> Zum Vorlesen auf dem iPhone einmalig laden (mit WLAN):
+      Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Vietnamesisch → „Linh“ laden. Danach klappt Vorlesen auch offline.
+    </div>
     <div id="phraseGroups"></div>
+  </section>
+
+  <!-- ============ Speisekarte ============ -->
+  <section id="v-menu" hidden>
+    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
+    <h1>Speisekarte</h1>
+    <input type="search" id="menuSearch" class="search" placeholder="Wort von der Karte suchen, z. B. bò" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="legend">
+      <span style="--k:var(--ok)"><i></i>okay für euch</span>
+      <span style="--k:var(--no)"><i></i>Fleisch</span>
+      <span style="--k:var(--sea)"><i></i>Meeresfrüchte</span>
+      <span style="--k:var(--info)"><i></i>Zubereitung</span>
+    </div>
+    <div id="menuGroups"></div>
+    <p class="empty" id="menuNone" hidden>Nichts gefunden. Tipp: Akzente weglassen geht auch, z. B. „ga“ für gà.</p>
+    <div class="tip"><strong>Tipp:</strong> Restaurants mit <strong>„Quán chay“</strong> oder <strong>„Nhà hàng chay“</strong> im Namen sind rein vegetarisch, oft buddhistisch. Dort ist alles ohne Fleisch, auch die Brühe. Wort antippen, um es vorzulesen.</div>
+  </section>
+
+  <!-- ============ Notfall ============ -->
+  <section id="v-sos" hidden>
+    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
+    <h1>Notfall</h1>
+    <div class="sos-nums">
+      <a class="sos-num" href="tel:113"><b>113</b><span>Polizei</span></a>
+      <a class="sos-num" href="tel:114"><b>114</b><span>Feuerwehr</span></a>
+      <a class="sos-num" href="tel:115"><b>115</b><span>Rettung</span></a>
+    </div>
+    <p class="hint">Antippen ruft direkt an. Am Telefon wird meist nur Vietnamesisch gesprochen – im Zweifel Hotel-Rezeption um Hilfe bitten.</p>
+
+    <h2>Deutsche Vertretungen</h2>
+    <div class="row contact">
+      <b>Generalkonsulat Ho-Chi-Minh-Stadt</b>
+      <span>Deutsches Haus, 33 Lê Duẩn, Quận 1</span>
+      <span>Tel. <a href="tel:+842838288100">+84 28 3828 8100</a></span>
+      <span>Notfall außerhalb der Öffnungszeiten:<br><a href="tel:+84936342598">+84 93 634 2598</a></span>
+    </div>
+    <div class="row contact">
+      <b>Botschaft Hanoi</b>
+      <span>29 Trần Phú, Ba Đình, Hà Nội</span>
+      <span>Tel. <a href="tel:+842432673335">+84 24 3267 3335</a></span>
+      <span>Notfall: <a href="tel:+84936342598">+84 93 634 2598</a></span>
+    </div>
+
+    <div id="sosPhrases"></div>
   </section>
 
   <!-- ============ Ausgaben ============ -->
@@ -323,6 +409,7 @@
   <div class="s-pre" id="sPre" lang="vi"></div>
   <div class="s-vi" id="sVi" lang="vi"></div>
   <div class="s-de" id="sDe"></div>
+  <button type="button" class="s-say" id="sSay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>Vorlesen</button>
 </div>
 
 <script>
@@ -345,7 +432,7 @@
   if (savedRate && savedRate.rate > 0) { rate = savedRate.rate; rateDate = savedRate.date; }
 
   /* ---------- Navigation ---------- */
-  const VIEWS = ['home', 'conv', 'price', 'stay', 'phr', 'exp'];
+  const VIEWS = ['home', 'conv', 'price', 'stay', 'phr', 'menu', 'exp', 'sos'];
   function go(name) {
     if (!VIEWS.includes(name)) name = 'home';
     VIEWS.forEach(v => { $('v-' + v).hidden = v !== name; });
@@ -381,16 +468,41 @@
   $('vnd000').addEventListener('click', () => { const n = parseVnd(vnd.value); if (n) { vnd.value = String(n * 1000); fromVnd(); } });
   document.querySelectorAll('#quickConv .pill').forEach(b => b.addEventListener('click', () => { vnd.value = b.dataset.v; fromVnd(); }));
 
+  /* ---------- Vorlesen ---------- */
+  const synth = window.speechSynthesis;
+  let viVoice = null;
+  function findVoice() {
+    if (!synth) return;
+    const vs = synth.getVoices();
+    viVoice = vs.find(v => /^vi/i.test(v.lang) && v.localService) || vs.find(v => /^vi/i.test(v.lang)) || null;
+    $('voiceHint').hidden = !!viVoice || !vs.length;
+  }
+  if (synth) { findVoice(); synth.addEventListener && synth.addEventListener('voiceschanged', findVoice); }
+  function speak(text) {
+    if (!synth) return;
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'vi-VN'; if (viVoice) u.voice = viVoice;
+    u.rate = 0.85;
+    synth.speak(u);
+    if (!viVoice) { findVoice(); if (!viVoice && synth.getVoices().length) $('voiceHint').hidden = false; }
+  }
+  const SPK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+
   /* ---------- Großanzeige ---------- */
   const show = $('show');
-  function openShow({ pre = '', vi, de = '', mode = '' }) {
+  let sayText = '';
+  function openShow({ pre = '', vi, de = '', mode = '', say }) {
     $('sPre').textContent = pre; $('sPre').hidden = !pre;
     $('sVi').textContent = vi;
     $('sDe').textContent = de; $('sDe').hidden = !de;
+    sayText = say || [pre, vi].filter(Boolean).join(' ');
+    $('sSay').hidden = !synth;
     show.className = mode;
     show.hidden = false;
   }
-  show.addEventListener('click', () => { show.hidden = true; });
+  $('sSay').addEventListener('click', e => { e.stopPropagation(); speak(sayText); });
+  show.addEventListener('click', () => { show.hidden = true; if (synth) synth.cancel(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') show.hidden = true; });
 
   /* ---------- Preis zeigen ---------- */
@@ -402,7 +514,7 @@
   });
   $('btnShowPrice').addEventListener('click', () => {
     const n = parseVnd(showPrice.value);
-    if (n) openShow({ vi: fmtVnd(n) + ' ₫', de: `${fmtVnd(n / 1000)}k  ·  ≈ ${fmtEur(n / rate)} €`, mode: 'price' });
+    if (n) openShow({ vi: fmtVnd(n) + ' ₫', de: `${fmtVnd(n / 1000)}k  ·  ≈ ${fmtEur(n / rate)} €`, mode: 'price', say: n + ' đồng' });
   });
 
   /* ---------- Unterkünfte ---------- */
@@ -486,6 +598,14 @@
       ['Đồ ăn rất ngon, cảm ơn!', 'Das Essen war sehr lecker, danke!'],
       ['Cho tôi tính tiền.', 'Die Rechnung, bitte.'],
     ]},
+    { group: 'Kaffee', items: [
+      ['Cho tôi một ly cà phê sữa đá.', 'Einen Cà phê sữa đá, bitte. – Starker Kaffee mit süßer Kondensmilch auf Eis.'],
+      ['Cho tôi một ly bạc xỉu.', 'Einen Bạc xỉu, bitte. – Viel Milch, wenig Kaffee, auf Eis. Milder.'],
+      ['Cho tôi một ly cà phê trứng.', 'Einen Eierkaffee, bitte. – Kaffee mit cremigem, süßem Eischaum.'],
+      ['Cho tôi một ly cà phê muối.', 'Einen Salzkaffee, bitte. – Kaffee mit leicht salziger Sahnehaube.'],
+      ['Hai ly.', 'Zwei Stück.'],
+      ['Nóng, không đá.', 'Heiß, ohne Eis.'],
+    ]},
     { group: 'Bezahlen & Handeln', items: [
       ['Bao nhiêu tiền?', 'Wie viel kostet das?'],
       ['Đắt quá!', 'Zu teuer!'],
@@ -500,17 +620,102 @@
       ['Nhà vệ sinh ở đâu?', 'Wo ist die Toilette?'],
     ]},
   ];
-  PHRASES.forEach(g => {
-    const h = document.createElement('h2'); h.textContent = g.group; $('phraseGroups').appendChild(h);
-    const box = document.createElement('div'); box.className = 'phrases';
+  const SOS_PHRASES = [
+    { group: 'Sätze für den Notfall', items: [
+      ['Giúp tôi với!', 'Hilfe!'],
+      ['Tôi cần bác sĩ.', 'Ich brauche einen Arzt.'],
+      ['Gọi xe cấp cứu!', 'Rufen Sie einen Krankenwagen!'],
+      ['Bệnh viện ở đâu?', 'Wo ist ein Krankenhaus?'],
+      ['Nhà thuốc ở đâu?', 'Wo ist eine Apotheke?'],
+      ['Đồn công an ở đâu?', 'Wo ist die Polizei?'],
+      ['Tôi bị đau bụng.', 'Ich habe Bauchschmerzen.'],
+      ['Tôi bị sốt.', 'Ich habe Fieber.'],
+      ['Tôi bị mất hộ chiếu.', 'Ich habe meinen Pass verloren.'],
+      ['Tôi bị mất cắp.', 'Ich wurde bestohlen.'],
+    ]},
+  ];
+  function renderPhrases(container, groups) {
+    groups.forEach(g => {
+      const h = document.createElement('h2'); h.textContent = g.group; container.appendChild(h);
+      const box = document.createElement('div'); box.className = 'phrases';
+      g.items.forEach(([vi, de]) => {
+        const row = document.createElement('div'); row.className = 'prow';
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'phrase';
+        b.innerHTML = '<span class="vi" lang="vi"></span><span class="de"></span>';
+        b.querySelector('.vi').textContent = vi; b.querySelector('.de').textContent = de;
+        b.addEventListener('click', () => openShow({ vi, de, mode: vi.length > 60 ? 'long' : '' }));
+        row.appendChild(b);
+        if (synth) {
+          const s = document.createElement('button'); s.type = 'button'; s.className = 'spk';
+          s.setAttribute('aria-label', 'Vorlesen'); s.innerHTML = SPK;
+          s.addEventListener('click', () => speak(vi));
+          row.appendChild(s);
+        }
+        box.appendChild(row);
+      });
+      container.appendChild(box);
+    });
+  }
+  renderPhrases($('phraseGroups'), PHRASES);
+  renderPhrases($('sosPhrases'), SOS_PHRASES);
+
+  /* ---------- Speisekarte ---------- */
+  // k: ok = okay für euch, no = Fleisch, sea = Meeresfrüchte, info = Zubereitung/neutral
+  const MENU = [
+    { group: 'Okay für euch', k: 'ok', items: [
+      ['chay', 'vegetarisch'], ['đậu hũ / đậu phụ', 'Tofu'], ['nấm', 'Pilze'], ['rau', 'Gemüse'],
+      ['cá', 'Fisch'], ['trứng', 'Ei'], ['cơm', 'Reis'], ['xôi', 'Klebreis'],
+      ['bún', 'dünne Reisnudeln'], ['phở', 'breite Reisnudeln'], ['mì', 'Weizennudeln'], ['miến', 'Glasnudeln'],
+      ['bánh mì', 'Baguette'], ['bánh xèo', 'knuspriger Pfannkuchen'], ['rau muống', 'Wasserspinat'], ['cà tím', 'Aubergine'],
+      ['khoai', 'Kartoffel / Süßkartoffel'], ['ngô / bắp', 'Mais'],
+    ]},
+    { group: 'Fleisch – nicht okay', k: 'no', items: [
+      ['thịt', 'Fleisch'], ['bò', 'Rind'], ['gà', 'Huhn'], ['heo / lợn', 'Schwein'],
+      ['vịt', 'Ente'], ['sườn', 'Rippchen'], ['xá xíu', 'gegrilltes Schwein'], ['chả', 'Fleischpastete / Wurst'],
+      ['giò', 'Wurst'], ['nem', 'meist mit Schwein'], ['lòng', 'Innereien'], ['tóp mỡ', 'Grieben (Speck)'],
+    ]},
+    { group: 'Meeresfrüchte – nicht okay', k: 'sea', items: [
+      ['hải sản', 'Meeresfrüchte'], ['tôm', 'Garnelen'], ['mực', 'Tintenfisch'], ['cua', 'Krabbe'],
+      ['ghẹ', 'Schwimmkrabbe'], ['nghêu / sò', 'Muscheln'], ['ốc', 'Meeresschnecken'], ['bạch tuộc', 'Oktopus'],
+    ]},
+    { group: 'Zubereitung', k: 'info', items: [
+      ['xào', 'gebraten'], ['chiên', 'frittiert'], ['nướng', 'gegrillt'], ['hấp', 'gedämpft'],
+      ['luộc', 'gekocht'], ['kho', 'geschmort'], ['canh', 'Suppe'], ['lẩu', 'Feuertopf (Hot Pot)'],
+      ['gỏi', 'Salat'], ['cuốn', 'Rolle'], ['sốt cà chua', 'in Tomatensoße'], ['tỏi', 'Knoblauch'],
+    ]},
+    { group: 'Gerichte zum Bestellen', k: 'ok', wide: true, items: [
+      ['cơm chay', 'vegetarischer Reisteller'], ['phở chay', 'vegetarische Nudelsuppe'],
+      ['bánh mì chay', 'vegetarisches Baguette'], ['gỏi cuốn chay', 'vegetarische Sommerrollen'],
+      ['đậu hũ sốt cà chua', 'Tofu in Tomatensoße'], ['rau muống xào tỏi', 'Wasserspinat mit Knoblauch'],
+      ['bánh xèo chay', 'vegetarischer Pfannkuchen'], ['nấm xào', 'gebratene Pilze'],
+      ['canh chua cá', 'saure Fischsuppe'], ['cá kho tộ', 'geschmorter Fisch im Tontopf'],
+      ['chả cá', 'gebratener Fisch mit Dill (Hanoi)'],
+    ]},
+  ];
+  const fold = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
+  const menuEls = [];
+  MENU.forEach(g => {
+    const wrap = document.createElement('div');
+    const h = document.createElement('h2'); h.textContent = g.group; wrap.appendChild(h);
+    const grid = document.createElement('div'); grid.className = 'words';
     g.items.forEach(([vi, de]) => {
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'phrase';
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'word' + (g.wide ? ' wide' : '');
+      b.style.setProperty('--k', `var(--${g.k})`);
       b.innerHTML = '<span class="vi" lang="vi"></span><span class="de"></span>';
       b.querySelector('.vi').textContent = vi; b.querySelector('.de').textContent = de;
-      b.addEventListener('click', () => openShow({ vi, de, mode: vi.length > 60 ? 'long' : '' }));
-      box.appendChild(b);
+      b.addEventListener('click', () => speak(vi.replace(/\s*\/\s*/g, ', ')));
+      grid.appendChild(b);
+      menuEls.push({ el: b, key: fold(vi + ' ' + de) });
     });
-    $('phraseGroups').appendChild(box);
+    wrap.appendChild(grid);
+    $('menuGroups').appendChild(wrap);
+  });
+  $('menuSearch').addEventListener('input', () => {
+    const q = fold($('menuSearch').value.trim());
+    let any = false;
+    menuEls.forEach(m => { const hit = !q || m.key.includes(q); m.el.hidden = !hit; any = any || hit; });
+    $('menuGroups').querySelectorAll(':scope > div').forEach(w => { w.hidden = !w.querySelector('.word:not([hidden])'); });
+    $('menuNone').hidden = any;
   });
 
   /* ---------- Ausgaben ---------- */
