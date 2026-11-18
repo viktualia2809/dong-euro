@@ -14,33 +14,46 @@
 <link rel="manifest" href="manifest.json">
 <style>
   :root {
-    --bg: #f3f6f5; --card: #ffffff; --fg: #14221e; --muted: #5d6f69; --line: #d8e2de; --accent: #0f7a66; --warn: #9a5b00;
+    --bg: #f3f6f5; --card: #ffffff; --fg: #14221e; --muted: #5d6f69; --line: #d8e2de; --accent: #0f7a66;
+    --warn: #9a5b00; --warn-bg: #fdf1dc; --good: #13795b; --good-bg: #dcf3ea; --bad: #b3261e; --bad-bg: #fbe3e1;
     --font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #0e1513; --card: #17211e; --fg: #e8f0ed; --muted: #93a7a0; --line: #2a3833; --accent: #3cc5a6; --warn: #e0a54a; color-scheme: dark; }
+    :root {
+      --bg: #0e1513; --card: #17211e; --fg: #e8f0ed; --muted: #93a7a0; --line: #2a3833; --accent: #3cc5a6;
+      --warn: #e0a54a; --warn-bg: #33270f; --good: #4fd1a5; --good-bg: #123228; --bad: #ff8a80; --bad-bg: #3a1714;
+      color-scheme: dark;
+    }
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html, body { margin: 0; min-height: 100%; }
   body {
     background: var(--bg); color: var(--fg); font-family: var(--font);
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
-    padding-top: calc(env(safe-area-inset-top, 0px) + 20px);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
     -webkit-text-size-adjust: 100%;
   }
   main { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
-  h1 { font-size: 1.35rem; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+  section { display: flex; flex-direction: column; gap: 14px; }
+
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--line); border-radius: 12px; padding: 3px; gap: 3px; }
+  .tabs button { font: 600 0.95rem var(--font); border: 0; border-radius: 9px; padding: 9px 0; background: transparent; color: var(--muted); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--card); color: var(--fg); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+
   .row { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 4px; }
   .row:focus-within { border-color: var(--accent); }
-  label { font-size: 0.78rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  label, .label { font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
   .field { display: flex; align-items: baseline; gap: 8px; }
   input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: 700 2rem/1.2 var(--font); font-variant-numeric: tabular-nums; padding: 0; outline: none; }
-  input::placeholder { color: var(--line); }
+  input::placeholder { color: var(--line); font-weight: 500; }
   .cur { font-size: 1.4rem; font-weight: 500; color: var(--muted); }
+  .k000 { font: 600 0.9rem var(--font); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; cursor: pointer; align-self: center; }
   .swap { text-align: center; color: var(--muted); font-size: 1.1rem; line-height: 1; }
+
   .quick { display: flex; flex-wrap: wrap; gap: 8px; }
   .quick button { font: 500 0.9rem var(--font); color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; cursor: pointer; }
   .quick button:active { border-color: var(--accent); color: var(--accent); }
@@ -48,77 +61,161 @@
   .rate { font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin: 6px 0 0; }
   .rate strong { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
   #status.offline { color: var(--warn); }
+
+  /* Geldscheine */
+  .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+  .note {
+    font: 700 0.95rem var(--font); font-variant-numeric: tabular-nums; border: 0; border-radius: 6px;
+    padding: 12px 4px; cursor: pointer; background: var(--n); color: var(--t);
+    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.25); touch-action: manipulation;
+  }
+  .note:active { transform: scale(0.96); }
+  .sub { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 4px; }
+  .link { font: 500 0.88rem var(--font); color: var(--accent); background: none; border: 0; padding: 4px 0; cursor: pointer; }
+
+  .result { border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; background: var(--card); border: 1px solid var(--line); }
+  .result .big { font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .result .small { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .result.bad { background: var(--bad-bg); border-color: transparent; }
+  .result.bad .big { color: var(--bad); }
+
+  .check { font-weight: 600; border-radius: 10px; padding: 10px 12px; font-variant-numeric: tabular-nums; }
+  .check.warn { background: var(--warn-bg); color: var(--warn); }
+  .check.good { background: var(--good-bg); color: var(--good); }
+  .check.bad { background: var(--bad-bg); color: var(--bad); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font: 600 0.8rem var(--font); border: 0; border-radius: 4px; padding: 5px 8px; background: var(--n); color: var(--t); cursor: pointer; }
+  .chip::after { content: " ×"; opacity: 0.7; }
+
+  .tip { font-size: 0.88rem; line-height: 1.5; color: var(--muted); background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .tip strong { color: var(--fg); }
+  .sw { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 2px; vertical-align: -0.05em; background: var(--n); }
+  .empty { color: var(--muted); font-size: 0.95rem; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Dong ↔ Euro</h1>
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" id="tab-conv" aria-controls="view-conv" aria-selected="true">Umrechnen</button>
+    <button type="button" role="tab" id="tab-change" aria-controls="view-change" aria-selected="false">Wechselgeld</button>
+  </div>
 
-  <div class="row">
-    <label for="vnd">Vietnamesische Dong</label>
-    <div class="field">
-      <input id="vnd" inputmode="numeric" autocomplete="off" placeholder="0" value="100.000">
-      <span class="cur">₫</span>
+  <!-- Umrechnen -->
+  <section id="view-conv" role="tabpanel" aria-labelledby="tab-conv">
+    <div class="row">
+      <label for="vnd">Vietnamesische Dong</label>
+      <div class="field">
+        <input id="vnd" inputmode="numeric" autocomplete="off" placeholder="0" value="100.000">
+        <span class="cur">₫</span>
+      </div>
     </div>
-  </div>
-
-  <div class="swap" aria-hidden="true">⇅</div>
-
-  <div class="row">
-    <label for="eur">Euro</label>
-    <div class="field">
-      <input id="eur" inputmode="decimal" autocomplete="off" placeholder="0">
-      <span class="cur">€</span>
+    <div class="swap" aria-hidden="true">⇅</div>
+    <div class="row">
+      <label for="eur">Euro</label>
+      <div class="field">
+        <input id="eur" inputmode="decimal" autocomplete="off" placeholder="0">
+        <span class="cur">€</span>
+      </div>
     </div>
-  </div>
+    <div class="quick" aria-label="Schnellauswahl Dong">
+      <button type="button" data-v="10000">10.000 ₫</button>
+      <button type="button" data-v="50000">50.000 ₫</button>
+      <button type="button" data-v="100000">100.000 ₫</button>
+      <button type="button" data-v="200000">200.000 ₫</button>
+      <button type="button" data-v="500000">500.000 ₫</button>
+    </div>
+    <p class="rate">
+      1 € = <strong id="r1"></strong> ₫<br>
+      100.000 ₫ = <strong id="r2"></strong> €<br>
+      <span id="status"></span>
+    </p>
+  </section>
 
-  <div class="quick" aria-label="Schnellauswahl Dong">
-    <button type="button" data-v="10000">10.000 ₫</button>
-    <button type="button" data-v="50000">50.000 ₫</button>
-    <button type="button" data-v="100000">100.000 ₫</button>
-    <button type="button" data-v="200000">200.000 ₫</button>
-    <button type="button" data-v="500000">500.000 ₫</button>
-  </div>
+  <!-- Wechselgeld -->
+  <section id="view-change" role="tabpanel" aria-labelledby="tab-change" hidden>
+    <div class="row">
+      <label for="price">Preis</label>
+      <div class="field">
+        <input id="price" class="vndin" inputmode="numeric" autocomplete="off" placeholder="z. B. 685.000">
+        <button type="button" class="k000" data-for="price" aria-label="Drei Nullen anhängen">000</button>
+        <span class="cur">₫</span>
+      </div>
+    </div>
 
-  <p class="rate">
-    1 € = <strong id="r1"></strong> ₫<br>
-    100.000 ₫ = <strong id="r2"></strong> €<br>
-    <span id="status"></span>
-  </p>
+    <div class="row">
+      <label for="given">Ich gebe</label>
+      <div class="field">
+        <input id="given" class="vndin" inputmode="numeric" autocomplete="off" placeholder="Scheine antippen">
+        <span class="cur">₫</span>
+      </div>
+      <div class="notes" id="givenNotes"></div>
+      <div class="sub"><span></span><button type="button" class="link" id="clearGiven">Betrag löschen</button></div>
+    </div>
+
+    <div class="result" id="result"><span class="empty">Preis und gegebenen Betrag eingeben, dann steht hier das Wechselgeld.</span></div>
+
+    <div class="row" id="countBox" hidden>
+      <span class="label">Nachzählen: jeden Schein antippen, den du zurückbekommst</span>
+      <div class="notes" id="backNotes"></div>
+      <div class="check" id="check"></div>
+      <div class="chips" id="chips" aria-label="Gezählte Scheine, antippen zum Entfernen"></div>
+      <div class="sub"><span class="empty" id="countSum"></span><button type="button" class="link" id="clearBack">Neu zählen</button></div>
+    </div>
+
+    <button type="button" class="link" id="resetAll" style="align-self:center">Alles zurücksetzen</button>
+
+    <div class="tip">
+      <strong>Vorsicht, leicht zu verwechseln:</strong><br>
+      <span class="sw" style="--n:#2f6db5"></span> 20.000 und <span class="sw" style="--n:#3aa6c4"></span> 500.000 sind beide blau.<br>
+      <span class="sw" style="--n:#b0843a"></span> 10.000 und <span class="sw" style="--n:#5f7f2e"></span> 100.000 haben fast gleich viele Nullen.<br>
+      Zähl die Nullen nach, bevor du einen Schein hergibst.
+    </div>
+  </section>
 </main>
 
 <script>
-  // Fallback, falls noch nie online geladen wurde
+  /* ---------- Kurs ---------- */
   let rate = 28273.41, rateDate = '2026-11-18', fresh = false;
   try {
     const saved = JSON.parse(localStorage.getItem('vndRate') || 'null');
     if (saved && saved.rate > 0) { rate = saved.rate; rateDate = saved.date; }
   } catch (e) {}
 
-  const vnd = document.getElementById('vnd');
-  const eur = document.getElementById('eur');
+  const $ = id => document.getElementById(id);
   const fmtVnd = n => Math.round(n).toLocaleString('de-DE');
   const fmtEur = n => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const parseVnd = s => Number(String(s).replace(/\D/g, '')) || 0;
   const parseEur = s => Number(s.replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '')) || 0;
   const fmtDate = iso => { const [y, m, d] = iso.split('-'); return `${d}.${m}.${y}`; };
 
+  /* ---------- Tabs ---------- */
+  function showTab(name) {
+    const conv = name !== 'change';
+    $('view-conv').hidden = !conv; $('view-change').hidden = conv;
+    $('tab-conv').setAttribute('aria-selected', conv); $('tab-change').setAttribute('aria-selected', !conv);
+    try { localStorage.setItem('tab', conv ? 'conv' : 'change'); } catch (e) {}
+  }
+  $('tab-conv').addEventListener('click', () => showTab('conv'));
+  $('tab-change').addEventListener('click', () => showTab('change'));
+  try { showTab(localStorage.getItem('tab') || 'conv'); } catch (e) {}
+
+  /* ---------- Umrechnen ---------- */
+  const vnd = $('vnd'), eur = $('eur');
   function fromVnd() {
     const digits = vnd.value.replace(/\D/g, '');
     vnd.value = digits ? fmtVnd(Number(digits)) : '';
     eur.value = digits ? fmtEur(Number(digits) / rate) : '';
   }
-  function fromEur() {
-    vnd.value = eur.value.trim() ? fmtVnd(parseEur(eur.value) * rate) : '';
-  }
+  function fromEur() { vnd.value = eur.value.trim() ? fmtVnd(parseEur(eur.value) * rate) : ''; }
   function render() {
-    document.getElementById('r1').textContent = fmtVnd(rate);
-    document.getElementById('r2').textContent = fmtEur(100000 / rate);
-    const st = document.getElementById('status');
+    $('r1').textContent = fmtVnd(rate);
+    $('r2').textContent = fmtEur(100000 / rate);
+    const st = $('status');
     st.textContent = fresh ? `Kurs vom ${fmtDate(rateDate)}, aktuell` : `Kurs vom ${fmtDate(rateDate)}, gespeichert (offline)`;
     st.className = fresh ? '' : 'offline';
     if (document.activeElement === eur) fromEur(); else fromVnd();
+    renderChange();
   }
-
   vnd.addEventListener('input', fromVnd);
   eur.addEventListener('input', fromEur);
   eur.addEventListener('blur', () => { if (eur.value.trim()) eur.value = fmtEur(parseEur(eur.value)); });
@@ -126,8 +223,93 @@
   document.querySelectorAll('.quick button').forEach(b =>
     b.addEventListener('click', () => { vnd.value = b.dataset.v; fromVnd(); }));
 
+  /* ---------- Wechselgeld ---------- */
+  // Farben angelehnt an die echten Scheine
+  const NOTES = [
+    { v: 500000, n: '#3aa6c4', t: '#08252d' },
+    { v: 200000, n: '#b8552f', t: '#ffffff' },
+    { v: 100000, n: '#5f7f2e', t: '#ffffff' },
+    { v: 50000,  n: '#b0507e', t: '#ffffff' },
+    { v: 20000,  n: '#2f6db5', t: '#ffffff' },
+    { v: 10000,  n: '#b0843a', t: '#1e1404' },
+    { v: 5000,   n: '#5b6fa8', t: '#ffffff' },
+    { v: 2000,   n: '#857563', t: '#ffffff' },
+    { v: 1000,   n: '#7f7f45', t: '#ffffff' },
+  ];
+  const noteOf = v => NOTES.find(x => x.v === v);
+  const price = $('price'), given = $('given');
+  let counted = [];
+
+  function noteButton(note, onTap) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'note';
+    b.style.setProperty('--n', note.n); b.style.setProperty('--t', note.t);
+    b.textContent = fmtVnd(note.v);
+    b.setAttribute('aria-label', fmtVnd(note.v) + ' Dong');
+    b.addEventListener('click', () => onTap(note.v));
+    return b;
+  }
+  NOTES.forEach(note => {
+    $('givenNotes').appendChild(noteButton(note, v => { given.value = fmtVnd(parseVnd(given.value) + v); renderChange(); }));
+    $('backNotes').appendChild(noteButton(note, v => { counted.push(v); renderChange(); }));
+  });
+
+  document.querySelectorAll('.vndin').forEach(el => {
+    el.addEventListener('input', () => { const n = parseVnd(el.value); el.value = n ? fmtVnd(n) : ''; renderChange(); });
+    el.addEventListener('focus', () => el.select());
+  });
+  document.querySelectorAll('.k000').forEach(b => b.addEventListener('click', () => {
+    const el = $(b.dataset.for); const n = parseVnd(el.value);
+    if (n) { el.value = fmtVnd(n * 1000); renderChange(); }
+  }));
+  $('clearGiven').addEventListener('click', () => { given.value = ''; renderChange(); });
+  $('clearBack').addEventListener('click', () => { counted = []; renderChange(); });
+  $('resetAll').addEventListener('click', () => { price.value = ''; given.value = ''; counted = []; renderChange(); });
+
+  function renderChange() {
+    const p = parseVnd(price.value), g = parseVnd(given.value), res = $('result');
+    const diff = g - p;
+    res.className = 'result';
+    $('countBox').hidden = true;
+    if (!p || !g) {
+      res.innerHTML = '<span class="empty">Preis und gegebenen Betrag eingeben, dann steht hier das Wechselgeld.</span>';
+      return;
+    }
+    if (diff < 0) {
+      res.className = 'result bad';
+      res.innerHTML = `<span class="label">Zu wenig gegeben</span><span class="big">es fehlen ${fmtVnd(-diff)} ₫</span>`;
+      return;
+    }
+    if (diff === 0) {
+      res.innerHTML = `<span class="label">Wechselgeld</span><span class="big">0 ₫</span><span class="small">Passt genau.</span>`;
+      return;
+    }
+    res.innerHTML = `<span class="label">Du bekommst zurück</span><span class="big">${fmtVnd(diff)} ₫</span><span class="small">≈ ${fmtEur(diff / rate)} €</span>`;
+
+    $('countBox').hidden = false;
+    const sum = counted.reduce((a, b) => a + b, 0);
+    const chk = $('check');
+    if (!counted.length) { chk.className = 'check warn'; chk.textContent = `Noch nichts gezählt, erwartet: ${fmtVnd(diff)} ₫`; }
+    else if (sum < diff) { chk.className = 'check warn'; chk.textContent = `Es fehlen noch ${fmtVnd(diff - sum)} ₫`; }
+    else if (sum === diff) { chk.className = 'check good'; chk.textContent = '✓ Stimmt genau'; }
+    else { chk.className = 'check bad'; chk.textContent = `${fmtVnd(sum - diff)} ₫ zu viel gezählt`; }
+    $('countSum').textContent = counted.length ? `Gezählt: ${fmtVnd(sum)} ₫` : '';
+
+    const chips = $('chips'); chips.innerHTML = '';
+    counted.forEach((v, i) => {
+      const note = noteOf(v), c = document.createElement('button');
+      c.type = 'button'; c.className = 'chip';
+      c.style.setProperty('--n', note.n); c.style.setProperty('--t', note.t);
+      c.textContent = fmtVnd(v);
+      c.setAttribute('aria-label', fmtVnd(v) + ' entfernen');
+      c.addEventListener('click', () => { counted.splice(i, 1); renderChange(); });
+      chips.appendChild(c);
+    });
+  }
+
   render();
 
+  /* ---------- Live-Kurs ---------- */
   async function update() {
     try {
       const r = await fetch('https://open.er-api.com/v6/latest/EUR', { cache: 'no-store' });
