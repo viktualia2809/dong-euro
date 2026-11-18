@@ -14,15 +14,17 @@
 <link rel="manifest" href="manifest.json">
 <style>
   :root {
-    --bg: #f3f6f5; --card: #ffffff; --fg: #14221e; --muted: #5d6f69; --line: #d8e2de; --accent: #0f7a66;
-    --warn: #9a5b00; --warn-bg: #fdf1dc; --good: #13795b; --good-bg: #dcf3ea; --bad: #b3261e; --bad-bg: #fbe3e1;
+    --bg: #f3f6f5; --card: #ffffff; --fg: #14221e; --muted: #5d6f69; --line: #d8e2de; --accent: #0f7a66; --accent-bg: #dcefe9;
+    --warn: #9a5b00; --bad: #b3261e;
+    --t1: #0f7a66; --t2: #c2603a; --t3: #3a6fb5; --t4: #8a5cc2; --t5: #b5822a;
     --font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0e1513; --card: #17211e; --fg: #e8f0ed; --muted: #93a7a0; --line: #2a3833; --accent: #3cc5a6;
-      --warn: #e0a54a; --warn-bg: #33270f; --good: #4fd1a5; --good-bg: #123228; --bad: #ff8a80; --bad-bg: #3a1714;
+      --bg: #0e1513; --card: #17211e; --fg: #e8f0ed; --muted: #93a7a0; --line: #2a3833; --accent: #3cc5a6; --accent-bg: #143229;
+      --warn: #e0a54a; --bad: #ff8a80;
+      --t1: #3cc5a6; --t2: #f08a62; --t3: #6fa3eb; --t4: #b590f0; --t5: #e6b45a;
       color-scheme: dark;
     }
   }
@@ -33,79 +35,178 @@
     background: var(--bg); color: var(--fg); font-family: var(--font);
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
-    padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
     -webkit-text-size-adjust: 100%;
   }
-  main { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+  main { max-width: 440px; margin: 0 auto; }
   section { display: flex; flex-direction: column; gap: 14px; }
+  h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+  h2 { font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 10px 0 -4px; }
+  button { font-family: var(--font); touch-action: manipulation; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  .tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--line); border-radius: 12px; padding: 3px; gap: 3px; }
-  .tabs button { font: 600 0.95rem var(--font); border: 0; border-radius: 9px; padding: 9px 0; background: transparent; color: var(--muted); cursor: pointer; }
-  .tabs button[aria-selected="true"] { background: var(--card); color: var(--fg); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+  /* Startseite */
+  .hello { display: flex; flex-direction: column; gap: 2px; margin: 8px 0 18px; }
+  .hello .sub { color: var(--muted); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+  .hello .sub.offline { color: var(--warn); }
+  .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .tile {
+    text-align: left; background: var(--card); color: var(--fg); border: 1px solid var(--line); border-radius: 20px;
+    padding: 16px; min-height: 132px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; cursor: pointer;
+  }
+  .tile:active { transform: scale(0.98); }
+  .tile.wide { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: center; }
+  .tile .ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--c); color: #fff; flex: none; }
+  @media (prefers-color-scheme: dark) { .tile .ic { color: #0e1513; } }
+  .tile .ic svg { width: 24px; height: 24px; }
+  .tile .tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .tile.wide .tx { flex: 1; }
+  .tile .tt { font-size: 1.05rem; font-weight: 700; }
+  .tile .ts { font-size: 0.82rem; color: var(--muted); line-height: 1.3; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 
-  .row { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  /* Kopfzeile einer Funktion */
+  .bar-top { display: flex; align-items: center; gap: 4px; margin: 0 0 2px -6px; }
+  .back { display: inline-flex; align-items: center; gap: 2px; border: 0; background: none; color: var(--accent); font-size: 1rem; font-weight: 500; padding: 8px 6px; cursor: pointer; }
+  .back svg { width: 20px; height: 20px; }
+
+  .row { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 6px; }
   .row:focus-within { border-color: var(--accent); }
   label, .label { font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
   .field { display: flex; align-items: baseline; gap: 8px; }
-  input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: 700 2rem/1.2 var(--font); font-variant-numeric: tabular-nums; padding: 0; outline: none; }
-  input::placeholder { color: var(--line); font-weight: 500; }
+  input.num { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: 700 2rem/1.2 var(--font); font-variant-numeric: tabular-nums; padding: 0; outline: none; }
+  input.num::placeholder { color: var(--line); font-weight: 500; }
+  input.txt, textarea.txt { width: 100%; font: 400 1rem var(--font); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; outline: none; }
+  textarea.txt { resize: vertical; min-height: 64px; }
+  input.txt:focus, textarea.txt:focus { border-color: var(--accent); }
   .cur { font-size: 1.4rem; font-weight: 500; color: var(--muted); }
-  .k000 { font: 600 0.9rem var(--font); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; cursor: pointer; align-self: center; }
+  .k000 { font-weight: 600; font-size: 0.9rem; color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; cursor: pointer; align-self: center; }
   .swap { text-align: center; color: var(--muted); font-size: 1.1rem; line-height: 1; }
 
   .quick { display: flex; flex-wrap: wrap; gap: 8px; }
-  .quick button { font: 500 0.9rem var(--font); color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; cursor: pointer; }
-  .quick button:active { border-color: var(--accent); color: var(--accent); }
-  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .pill { font-weight: 500; font-size: 0.9rem; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; }
+  .pill:active { border-color: var(--accent); color: var(--accent); }
+  .pill[aria-pressed="true"] { background: var(--accent-bg); border-color: var(--accent); }
   .rate { font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin: 6px 0 0; }
   .rate strong { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
-  #status.offline { color: var(--warn); }
+  .offline { color: var(--warn); }
 
-  /* Geldscheine */
-  .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
-  .note {
-    font: 700 0.95rem var(--font); font-variant-numeric: tabular-nums; border: 0; border-radius: 6px;
-    padding: 12px 4px; cursor: pointer; background: var(--n); color: var(--t);
-    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.25); touch-action: manipulation;
-  }
-  .note:active { transform: scale(0.96); }
-  .sub { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 4px; }
-  .link { font: 500 0.88rem var(--font); color: var(--accent); background: none; border: 0; padding: 4px 0; cursor: pointer; }
-
-  .result { border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; background: var(--card); border: 1px solid var(--line); }
-  .result .big { font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .result .small { color: var(--muted); font-variant-numeric: tabular-nums; }
-  .result.bad { background: var(--bad-bg); border-color: transparent; }
-  .result.bad .big { color: var(--bad); }
-
-  .check { font-weight: 600; border-radius: 10px; padding: 10px 12px; font-variant-numeric: tabular-nums; }
-  .check.warn { background: var(--warn-bg); color: var(--warn); }
-  .check.good { background: var(--good-bg); color: var(--good); }
-  .check.bad { background: var(--bad-bg); color: var(--bad); }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { font: 600 0.8rem var(--font); border: 0; border-radius: 4px; padding: 5px 8px; background: var(--n); color: var(--t); cursor: pointer; }
-  .chip::after { content: " ×"; opacity: 0.7; }
+  .primary { font-weight: 600; font-size: 1rem; color: #fff; background: var(--accent); border: 0; border-radius: 12px; padding: 13px 16px; cursor: pointer; }
+  @media (prefers-color-scheme: dark) { .primary { color: #06231c; } }
+  .primary:disabled { opacity: 0.4; }
+  .secondary { font-weight: 600; font-size: 0.95rem; color: var(--accent); background: var(--accent-bg); border: 0; border-radius: 12px; padding: 12px 14px; cursor: pointer; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .link { font-weight: 500; font-size: 0.92rem; color: var(--accent); background: none; border: 0; padding: 6px 0; cursor: pointer; text-decoration: none; }
+  .link.danger { color: var(--bad); }
+  .hint { font-size: 0.85rem; color: var(--muted); line-height: 1.45; margin: 0; }
+  .empty { color: var(--muted); font-size: 0.95rem; }
 
   .tip { font-size: 0.88rem; line-height: 1.5; color: var(--muted); background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
   .tip strong { color: var(--fg); }
-  .sw { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 2px; vertical-align: -0.05em; background: var(--n); }
-  .empty { color: var(--muted); font-size: 0.95rem; }
+  .sw { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 2px; vertical-align: -0.05em; }
+
+  /* Unterkünfte */
+  .stay-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .badge { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); background: var(--accent-bg); border-radius: 6px; padding: 3px 7px; }
+  .stay-name { font-size: 1.12rem; font-weight: 700; }
+  .stay-addr { font-size: 0.98rem; line-height: 1.4; }
+  .stay.other .stay-name { font-size: 1rem; }
+
+  /* Sätze */
+  .phrases { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 14px; }
+  .phrase { text-align: left; background: transparent; border: 0; border-top: 1px solid var(--line); padding: 12px 16px; cursor: pointer; color: var(--fg); display: flex; flex-direction: column; gap: 2px; }
+  .phrase:first-child { border-top: 0; }
+  .phrase:active { background: var(--accent-bg); }
+  .phrase .vi { font-size: 1.08rem; font-weight: 600; line-height: 1.35; }
+  .phrase .de { font-size: 0.85rem; color: var(--muted); line-height: 1.35; }
+
+  /* Großanzeige */
+  #show {
+    position: fixed; inset: 0; z-index: 50; background: var(--card); color: var(--fg);
+    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 18px; text-align: center;
+    padding: calc(env(safe-area-inset-top, 0px) + 40px) max(24px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(24px, env(safe-area-inset-left, 0px));
+    cursor: pointer;
+  }
+  #show .s-pre { font-size: 1.3rem; font-weight: 600; color: var(--muted); }
+  #show .s-vi { font-size: clamp(2rem, 9vw, 3.4rem); font-weight: 700; line-height: 1.25; text-wrap: balance; overflow-wrap: anywhere; white-space: pre-line; }
+  #show.price .s-vi { font-size: clamp(3rem, 17vw, 7rem); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  #show.long .s-vi { font-size: clamp(1.6rem, 7vw, 2.4rem); }
+  #show .s-de { font-size: 1rem; color: var(--muted); max-width: 32ch; }
+  #show .s-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(16px, env(safe-area-inset-right, 0px)); font-size: 0.9rem; color: var(--muted); }
+
+  /* Ausgaben */
+  .cats { display: flex; flex-wrap: wrap; gap: 8px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
+  .pill .dot { margin-right: 6px; }
+  .totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .tot { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .tot .k { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .tot .e { font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tot .v { font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .bars { display: flex; flex-direction: column; gap: 8px; }
+  .bar { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; font-size: 0.88rem; align-items: center; }
+  .bar .nm { display: flex; align-items: center; gap: 6px; }
+  .bar .am { font-variant-numeric: tabular-nums; color: var(--muted); }
+  .bar .tr { grid-column: 1 / -1; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+  .bar .tr span { display: block; height: 100%; background: var(--c); border-radius: 3px; }
+  .day { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 600; color: var(--muted); margin: 6px 2px -6px; font-variant-numeric: tabular-nums; }
+  .list { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 12px; }
+  .item { display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center; padding: 11px 12px 11px 14px; border-top: 1px solid var(--line); }
+  .item:first-child { border-top: 0; }
+  .item .what { min-width: 0; }
+  .item .t1 { font-size: 0.95rem; overflow-wrap: anywhere; }
+  .item .t2 { font-size: 0.78rem; color: var(--muted); }
+  .item .amt { text-align: right; font-variant-numeric: tabular-nums; }
+  .item .amt b { display: block; font-size: 0.95rem; }
+  .item .amt small { font-size: 0.78rem; color: var(--muted); }
+  .del { border: 0; background: none; color: var(--muted); font-size: 1.1rem; padding: 4px 6px; cursor: pointer; }
+  .del.confirm { color: var(--bad); font-size: 0.8rem; font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) { .tile:active { transform: none; } }
 </style>
 </head>
 <body>
 <main>
-  <div class="tabs" role="tablist">
-    <button type="button" role="tab" id="tab-conv" aria-controls="view-conv" aria-selected="true">Umrechnen</button>
-    <button type="button" role="tab" id="tab-change" aria-controls="view-change" aria-selected="false">Wechselgeld</button>
-  </div>
 
-  <!-- Umrechnen -->
-  <section id="view-conv" role="tabpanel" aria-labelledby="tab-conv">
+  <!-- ============ Startseite ============ -->
+  <section id="v-home">
+    <div class="hello">
+      <h1>Xin chào!</h1>
+      <span class="sub" id="homeRate"></span>
+    </div>
+    <div class="tiles">
+      <button type="button" class="tile wide" data-go="conv" style="--c:var(--t1)">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg></span>
+        <span class="tx"><span class="tt">Umrechnen</span><span class="ts">Dong ↔ Euro</span></span>
+      </button>
+      <button type="button" class="tile" data-go="price" style="--c:var(--t2)">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 12h10M12 9v6"/></svg></span>
+        <span class="tx"><span class="tt">Preis zeigen</span><span class="ts">Groß fürs Handeln</span></span>
+      </button>
+      <button type="button" class="tile" data-go="stay" style="--c:var(--t3)">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+        <span class="tx"><span class="tt">Unterkunft</span><span class="ts" id="tileStay"></span></span>
+      </button>
+      <button type="button" class="tile" data-go="phr" style="--c:var(--t4)">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg></span>
+        <span class="tx"><span class="tt">Sätze</span><span class="ts">Vegetarisch, Essen, Handeln</span></span>
+      </button>
+      <button type="button" class="tile" data-go="exp" style="--c:var(--t5)">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>
+        <span class="tx"><span class="tt">Ausgaben</span><span class="ts" id="tileExp"></span></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ Umrechnen ============ -->
+  <section id="v-conv" hidden>
+    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
+    <h1>Umrechnen</h1>
     <div class="row">
       <label for="vnd">Vietnamesische Dong</label>
       <div class="field">
-        <input id="vnd" inputmode="numeric" autocomplete="off" placeholder="0" value="100.000">
+        <input id="vnd" class="num" inputmode="numeric" autocomplete="off" placeholder="0" value="100.000">
+        <button type="button" class="k000" id="vnd000" aria-label="Drei Nullen anhängen">000</button>
         <span class="cur">₫</span>
       </div>
     </div>
@@ -113,91 +214,157 @@
     <div class="row">
       <label for="eur">Euro</label>
       <div class="field">
-        <input id="eur" inputmode="decimal" autocomplete="off" placeholder="0">
+        <input id="eur" class="num" inputmode="decimal" autocomplete="off" placeholder="0">
         <span class="cur">€</span>
       </div>
     </div>
-    <div class="quick" aria-label="Schnellauswahl Dong">
-      <button type="button" data-v="10000">10.000 ₫</button>
-      <button type="button" data-v="50000">50.000 ₫</button>
-      <button type="button" data-v="100000">100.000 ₫</button>
-      <button type="button" data-v="200000">200.000 ₫</button>
-      <button type="button" data-v="500000">500.000 ₫</button>
+    <div class="quick" id="quickConv" aria-label="Schnellauswahl Dong">
+      <button type="button" class="pill" data-v="10000">10.000 ₫</button>
+      <button type="button" class="pill" data-v="50000">50.000 ₫</button>
+      <button type="button" class="pill" data-v="100000">100.000 ₫</button>
+      <button type="button" class="pill" data-v="200000">200.000 ₫</button>
+      <button type="button" class="pill" data-v="500000">500.000 ₫</button>
     </div>
     <p class="rate">
       1 € = <strong id="r1"></strong> ₫<br>
       100.000 ₫ = <strong id="r2"></strong> €<br>
       <span id="status"></span>
     </p>
-  </section>
-
-  <!-- Wechselgeld -->
-  <section id="view-change" role="tabpanel" aria-labelledby="tab-change" hidden>
-    <div class="row">
-      <label for="price">Preis</label>
-      <div class="field">
-        <input id="price" class="vndin" inputmode="numeric" autocomplete="off" placeholder="z. B. 685.000">
-        <button type="button" class="k000" data-for="price" aria-label="Drei Nullen anhängen">000</button>
-        <span class="cur">₫</span>
-      </div>
-    </div>
-
-    <div class="row">
-      <label for="given">Ich gebe</label>
-      <div class="field">
-        <input id="given" class="vndin" inputmode="numeric" autocomplete="off" placeholder="Scheine antippen">
-        <span class="cur">₫</span>
-      </div>
-      <div class="notes" id="givenNotes"></div>
-      <div class="sub"><span></span><button type="button" class="link" id="clearGiven">Betrag löschen</button></div>
-    </div>
-
-    <div class="result" id="result"><span class="empty">Preis und gegebenen Betrag eingeben, dann steht hier das Wechselgeld.</span></div>
-
-    <div class="row" id="countBox" hidden>
-      <span class="label">Nachzählen: jeden Schein antippen, den du zurückbekommst</span>
-      <div class="notes" id="backNotes"></div>
-      <div class="check" id="check"></div>
-      <div class="chips" id="chips" aria-label="Gezählte Scheine, antippen zum Entfernen"></div>
-      <div class="sub"><span class="empty" id="countSum"></span><button type="button" class="link" id="clearBack">Neu zählen</button></div>
-    </div>
-
-    <button type="button" class="link" id="resetAll" style="align-self:center">Alles zurücksetzen</button>
-
     <div class="tip">
       <strong>Vorsicht, leicht zu verwechseln:</strong><br>
-      <span class="sw" style="--n:#2f6db5"></span> 20.000 und <span class="sw" style="--n:#3aa6c4"></span> 500.000 sind beide blau.<br>
-      <span class="sw" style="--n:#b0843a"></span> 10.000 und <span class="sw" style="--n:#5f7f2e"></span> 100.000 haben fast gleich viele Nullen.<br>
-      Zähl die Nullen nach, bevor du einen Schein hergibst.
+      <span class="sw" style="background:#2f6db5"></span> 20.000 und <span class="sw" style="background:#3aa6c4"></span> 500.000 sind beide blau.<br>
+      <span class="sw" style="background:#b0843a"></span> 10.000 und <span class="sw" style="background:#5f7f2e"></span> 100.000 haben fast gleich viele Nullen.<br>
+      Auf Schildern steht oft „k“: 50k = 50.000 ₫.
     </div>
+  </section>
+
+  <!-- ============ Preis zeigen ============ -->
+  <section id="v-price" hidden>
+    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
+    <h1>Preis zeigen</h1>
+    <div class="row">
+      <label for="showPrice">Betrag</label>
+      <div class="field">
+        <input id="showPrice" class="num vndin" inputmode="numeric" autocomplete="off" placeholder="z. B. 150.000">
+        <button type="button" class="k000" data-for="showPrice" aria-label="Drei Nullen anhängen">000</button>
+        <span class="cur">₫</span>
+      </div>
+      <span class="empty" id="showPriceEur">&nbsp;</span>
+      <button type="button" class="primary" id="btnShowPrice" disabled>Groß zeigen</button>
+    </div>
+    <p class="hint">Tipp: „150“ tippen und dann „000“ – das geht schneller als die vielen Nullen. Auf dem großen Bildschirm siehst du unten auch den Euro-Wert.</p>
+  </section>
+
+  <!-- ============ Unterkunft ============ -->
+  <section id="v-stay" hidden>
+    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
+    <h1>Unterkunft</h1>
+    <div id="stayList" style="display:flex;flex-direction:column;gap:12px"></div>
+    <button type="button" class="secondary" id="btnAddStay">+ Unterkunft hinzufügen</button>
+
+    <div class="row" id="stayForm" hidden>
+      <span class="label" id="stayFormTitle">Neue Unterkunft</span>
+      <label for="inMap">Google-Maps-Link</label>
+      <input id="inMap" class="txt" inputmode="url" autocomplete="off" placeholder="https://maps.app.goo.gl/…">
+      <label for="inName">Name</label>
+      <input id="inName" class="txt" autocomplete="off" placeholder="z. B. Hotel in Hội An">
+      <label for="inAddr">Adresse</label>
+      <textarea id="inAddr" class="txt" autocomplete="off" placeholder="Straße, Viertel, Stadt"></textarea>
+      <p class="hint">So bekommst du beides aus Google Maps: Ort öffnen → <strong>Teilen</strong> → Link kopieren. Für die Adresse lange auf die Adresszeile drücken → <strong>Kopieren</strong>. Die Adresse brauchst du, damit du sie auch offline dem Fahrer zeigen kannst.</p>
+      <div class="actions">
+        <button type="button" class="primary" id="btnSaveStay">Speichern</button>
+        <button type="button" class="link" id="btnCancelStay">Abbrechen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Sätze ============ -->
+  <section id="v-phr" hidden>
+    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
+    <h1>Sätze</h1>
+    <p class="hint">Satz antippen, um ihn groß zu zeigen. Nochmal tippen schließt.</p>
+    <div id="phraseGroups"></div>
+  </section>
+
+  <!-- ============ Ausgaben ============ -->
+  <section id="v-exp" hidden>
+    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
+    <h1>Ausgaben</h1>
+    <div class="row">
+      <label for="expAmt">Neue Ausgabe</label>
+      <div class="field">
+        <input id="expAmt" class="num vndin" inputmode="numeric" autocomplete="off" placeholder="0">
+        <button type="button" class="k000" data-for="expAmt" aria-label="Drei Nullen anhängen">000</button>
+        <span class="cur">₫</span>
+      </div>
+      <div class="cats" id="expCats" role="group" aria-label="Kategorie"></div>
+      <input id="expNote" class="txt" autocomplete="off" placeholder="Notiz (optional), z. B. Phở, Grab zum Markt">
+      <button type="button" class="primary" id="btnAddExp" disabled>Eintragen</button>
+    </div>
+
+    <div class="totals">
+      <div class="tot"><span class="k">Heute</span><span class="e" id="totToday"></span><span class="v" id="totTodayV"></span></div>
+      <div class="tot"><span class="k">Gesamt</span><span class="e" id="totAll"></span><span class="v" id="totAllV"></span></div>
+      <div class="tot"><span class="k">Ø pro Tag</span><span class="e" id="totAvg"></span><span class="v" id="totAvgV"></span></div>
+    </div>
+
+    <div class="row" id="catBox">
+      <span class="label">Nach Kategorie</span>
+      <div class="bars" id="bars"></div>
+    </div>
+
+    <div id="expList"></div>
+    <p class="hint">Euro-Beträge sind mit dem aktuellen Kurs umgerechnet. Die Liste ist nur auf diesem Handy gespeichert.</p>
   </section>
 </main>
 
-<script>
-  /* ---------- Kurs ---------- */
-  let rate = 28273.41, rateDate = '2026-11-18', fresh = false;
-  try {
-    const saved = JSON.parse(localStorage.getItem('vndRate') || 'null');
-    if (saved && saved.rate > 0) { rate = saved.rate; rateDate = saved.date; }
-  } catch (e) {}
+<div id="show" hidden role="dialog" aria-modal="true" aria-label="Großanzeige">
+  <span class="s-close">Tippen zum Schließen</span>
+  <div class="s-pre" id="sPre" lang="vi"></div>
+  <div class="s-vi" id="sVi" lang="vi"></div>
+  <div class="s-de" id="sDe"></div>
+</div>
 
+<script>
   const $ = id => document.getElementById(id);
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  };
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const fmtVnd = n => Math.round(n).toLocaleString('de-DE');
   const fmtEur = n => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const parseVnd = s => Number(String(s).replace(/\D/g, '')) || 0;
   const parseEur = s => Number(s.replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '')) || 0;
   const fmtDate = iso => { const [y, m, d] = iso.split('-'); return `${d}.${m}.${y}`; };
+  const dayKey = t => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
-  /* ---------- Tabs ---------- */
-  function showTab(name) {
-    const conv = name !== 'change';
-    $('view-conv').hidden = !conv; $('view-change').hidden = conv;
-    $('tab-conv').setAttribute('aria-selected', conv); $('tab-change').setAttribute('aria-selected', !conv);
-    try { localStorage.setItem('tab', conv ? 'conv' : 'change'); } catch (e) {}
+  /* ---------- Kurs ---------- */
+  let rate = 28273.41, rateDate = '2026-11-18', fresh = false;
+  const savedRate = store.get('vndRate', null);
+  if (savedRate && savedRate.rate > 0) { rate = savedRate.rate; rateDate = savedRate.date; }
+
+  /* ---------- Navigation ---------- */
+  const VIEWS = ['home', 'conv', 'price', 'stay', 'phr', 'exp'];
+  function go(name) {
+    if (!VIEWS.includes(name)) name = 'home';
+    VIEWS.forEach(v => { $('v-' + v).hidden = v !== name; });
+    if (location.hash.slice(1) !== (name === 'home' ? '' : name)) history.replaceState(null, '', name === 'home' ? location.pathname : '#' + name);
+    window.scrollTo(0, 0);
+    if (name === 'home') renderHome();
   }
-  $('tab-conv').addEventListener('click', () => showTab('conv'));
-  $('tab-change').addEventListener('click', () => showTab('change'));
-  try { showTab(localStorage.getItem('tab') || 'conv'); } catch (e) {}
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
+  window.addEventListener('hashchange', () => go(location.hash.slice(1)));
+
+  /* ---------- Dong-Felder ---------- */
+  document.querySelectorAll('.vndin').forEach(el => {
+    el.addEventListener('input', () => { const n = parseVnd(el.value); el.value = n ? fmtVnd(n) : ''; el.dispatchEvent(new Event('change')); });
+    el.addEventListener('focus', () => el.select());
+  });
+  document.querySelectorAll('.k000[data-for]').forEach(b => b.addEventListener('click', () => {
+    const el = $(b.dataset.for), n = parseVnd(el.value);
+    if (n) { el.value = fmtVnd(n * 1000); el.dispatchEvent(new Event('change')); }
+  }));
 
   /* ---------- Umrechnen ---------- */
   const vnd = $('vnd'), eur = $('eur');
@@ -207,6 +374,246 @@
     eur.value = digits ? fmtEur(Number(digits) / rate) : '';
   }
   function fromEur() { vnd.value = eur.value.trim() ? fmtVnd(parseEur(eur.value) * rate) : ''; }
+  vnd.addEventListener('input', fromVnd);
+  eur.addEventListener('input', fromEur);
+  eur.addEventListener('blur', () => { if (eur.value.trim()) eur.value = fmtEur(parseEur(eur.value)); });
+  [vnd, eur].forEach(el => el.addEventListener('focus', () => el.select()));
+  $('vnd000').addEventListener('click', () => { const n = parseVnd(vnd.value); if (n) { vnd.value = String(n * 1000); fromVnd(); } });
+  document.querySelectorAll('#quickConv .pill').forEach(b => b.addEventListener('click', () => { vnd.value = b.dataset.v; fromVnd(); }));
+
+  /* ---------- Großanzeige ---------- */
+  const show = $('show');
+  function openShow({ pre = '', vi, de = '', mode = '' }) {
+    $('sPre').textContent = pre; $('sPre').hidden = !pre;
+    $('sVi').textContent = vi;
+    $('sDe').textContent = de; $('sDe').hidden = !de;
+    show.className = mode;
+    show.hidden = false;
+  }
+  show.addEventListener('click', () => { show.hidden = true; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') show.hidden = true; });
+
+  /* ---------- Preis zeigen ---------- */
+  const showPrice = $('showPrice');
+  showPrice.addEventListener('change', () => {
+    const n = parseVnd(showPrice.value);
+    $('btnShowPrice').disabled = !n;
+    $('showPriceEur').textContent = n ? `≈ ${fmtEur(n / rate)} €` : ' ';
+  });
+  $('btnShowPrice').addEventListener('click', () => {
+    const n = parseVnd(showPrice.value);
+    if (n) openShow({ vi: fmtVnd(n) + ' ₫', de: `${fmtVnd(n / 1000)}k  ·  ≈ ${fmtEur(n / rate)} €`, mode: 'price' });
+  });
+
+  /* ---------- Unterkünfte ---------- */
+  let stays = store.get('stays', null);
+  if (!stays) {
+    stays = [{ id: 'lumiere', name: 'LUMIÈRE Riverside', addr: '628A Võ Nguyên Giáp, An Phú, Thủ Đức, TP. Hồ Chí Minh', map: 'https://maps.app.goo.gl/RyofNPwQHAsRfEHZ9' }];
+    store.set('stays', stays);
+  }
+  let activeStay = store.get('activeStay', stays[0] && stays[0].id);
+  let editingStay = null, pendingStayDel = null;
+  const curStay = () => stays.find(s => s.id === activeStay) || stays[0];
+  const saveStays = () => { store.set('stays', stays); store.set('activeStay', activeStay); };
+
+  function showStay(s) {
+    openShow({ pre: 'Xin chở tôi đến địa chỉ này:', vi: [s.name, s.addr].filter(Boolean).join('\n'), de: 'Bitte bringen Sie mich zu dieser Adresse.', mode: 'long' });
+  }
+  function renderStays() {
+    const list = $('stayList'); list.innerHTML = '';
+    if (!stays.length) { list.innerHTML = '<div class="row"><span class="empty">Noch keine Unterkunft eingetragen.</span></div>'; return; }
+    const cur = curStay();
+    [cur, ...stays.filter(s => s !== cur)].forEach(s => {
+      const isCur = s === cur;
+      const r = document.createElement('div'); r.className = 'row stay' + (isCur ? '' : ' other');
+      r.innerHTML = `<div class="stay-head"><span class="stay-name"></span>${isCur ? '<span class="badge">Aktuell</span>' : ''}</div>
+        <div class="stay-addr"></div><div class="actions"></div>`;
+      r.querySelector('.stay-name').textContent = s.name || 'Ohne Namen';
+      r.querySelector('.stay-addr').textContent = s.addr || 'Keine Adresse eingetragen';
+      const a = r.querySelector('.actions');
+      const btn = (cls, text, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.textContent = text; b.addEventListener('click', fn); a.appendChild(b); return b; };
+      if (isCur) btn('primary', 'Dem Fahrer zeigen', () => showStay(s));
+      else btn('link', 'Als aktuell setzen', () => { activeStay = s.id; saveStays(); renderStays(); });
+      if (s.map) { const l = document.createElement('a'); l.className = 'link'; l.href = s.map; l.target = '_blank'; l.rel = 'noopener'; l.textContent = 'In Maps öffnen'; a.appendChild(l); }
+      btn('link', 'Bearbeiten', () => openStayForm(s));
+      const del = btn('link danger', pendingStayDel === s.id ? 'Wirklich löschen?' : 'Löschen', () => {
+        if (pendingStayDel === s.id) {
+          stays = stays.filter(x => x.id !== s.id); pendingStayDel = null;
+          if (activeStay === s.id) activeStay = stays[0] && stays[0].id;
+          saveStays();
+        } else { pendingStayDel = s.id; setTimeout(() => { if (pendingStayDel === s.id) { pendingStayDel = null; renderStays(); } }, 3000); }
+        renderStays();
+      });
+      list.appendChild(r);
+    });
+  }
+  function openStayForm(s) {
+    editingStay = s || null;
+    $('stayFormTitle').textContent = s ? 'Unterkunft bearbeiten' : 'Neue Unterkunft';
+    $('inMap').value = s ? s.map || '' : ''; $('inName').value = s ? s.name || '' : ''; $('inAddr').value = s ? s.addr || '' : '';
+    $('stayForm').hidden = false; $('btnAddStay').hidden = true;
+    $('stayForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function closeStayForm() { $('stayForm').hidden = true; $('btnAddStay').hidden = false; editingStay = null; }
+  $('btnAddStay').addEventListener('click', () => openStayForm(null));
+  $('btnCancelStay').addEventListener('click', closeStayForm);
+  $('btnSaveStay').addEventListener('click', () => {
+    const raw = $('inMap').value.trim();
+    const m = raw.match(/https?:\/\/\S+/);
+    const data = { name: $('inName').value.trim(), addr: $('inAddr').value.trim(), map: m ? m[0] : '' };
+    if (!data.name && !data.addr && !data.map) { closeStayForm(); return; }
+    if (editingStay) Object.assign(editingStay, data);
+    else { const s = { id: uid(), ...data }; stays.push(s); activeStay = s.id; }
+    saveStays(); closeStayForm(); renderStays();
+  });
+
+  /* ---------- Sätze ---------- */
+  const PHRASES = [
+    { group: 'Vegetarisch', items: [
+      ['Chúng tôi ăn chay.', 'Wir sind Vegetarier.'],
+      ['Ở đây có món chay không?', 'Gibt es hier vegetarische Gerichte?'],
+      ['Món này có chay không?', 'Ist dieses Gericht vegetarisch?'],
+      ['Món này có miếng thịt không?', 'Sind in diesem Gericht Fleischstücke?'],
+      ['Làm món này không có thịt được không?', 'Können Sie das Gericht ohne Fleisch machen?'],
+      ['Nước dùng thịt hay nước mắm thì không sao, nhưng xin đừng cho miếng thịt, cá hoặc hải sản vào món ăn.',
+       'Fleischbrühe oder Fischsoße sind kein Problem, aber bitte keine Stücke von Fleisch, Fisch oder Meeresfrüchten ins Essen.'],
+    ]},
+    { group: 'Essen & Trinken', items: [
+      ['Không đá.', 'Ohne Eis.'],
+      ['Không cay.', 'Nicht scharf.'],
+      ['Ít đường.', 'Wenig Zucker.'],
+      ['Đồ ăn rất ngon, cảm ơn!', 'Das Essen war sehr lecker, danke!'],
+      ['Cho tôi tính tiền.', 'Die Rechnung, bitte.'],
+    ]},
+    { group: 'Bezahlen & Handeln', items: [
+      ['Bao nhiêu tiền?', 'Wie viel kostet das?'],
+      ['Đắt quá!', 'Zu teuer!'],
+      ['Bớt được không?', 'Geht es etwas günstiger?'],
+      ['Tôi trả bằng thẻ được không?', 'Kann ich mit Karte zahlen?'],
+    ]},
+    { group: 'Allgemein', items: [
+      ['Xin chào.', 'Hallo.'],
+      ['Cảm ơn!', 'Danke!'],
+      ['Xin lỗi.', 'Entschuldigung.'],
+      ['Tôi không hiểu.', 'Ich verstehe nicht.'],
+      ['Nhà vệ sinh ở đâu?', 'Wo ist die Toilette?'],
+    ]},
+  ];
+  PHRASES.forEach(g => {
+    const h = document.createElement('h2'); h.textContent = g.group; $('phraseGroups').appendChild(h);
+    const box = document.createElement('div'); box.className = 'phrases';
+    g.items.forEach(([vi, de]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'phrase';
+      b.innerHTML = '<span class="vi" lang="vi"></span><span class="de"></span>';
+      b.querySelector('.vi').textContent = vi; b.querySelector('.de').textContent = de;
+      b.addEventListener('click', () => openShow({ vi, de, mode: vi.length > 60 ? 'long' : '' }));
+      box.appendChild(b);
+    });
+    $('phraseGroups').appendChild(box);
+  });
+
+  /* ---------- Ausgaben ---------- */
+  const CATS = [
+    { id: 'food', name: 'Essen & Trinken', c: '#e0803a' },
+    { id: 'fun', name: 'Aktivitäten', c: '#3b82c4' },
+    { id: 'trans', name: 'Transport', c: '#7a5cc2' },
+    { id: 'shop', name: 'Einkäufe', c: '#c2477a' },
+    { id: 'well', name: 'Massage & Wellness', c: '#2a9d8f' },
+    { id: 'misc', name: 'Sonstiges', c: '#8a8f8c' },
+  ];
+  const catOf = id => CATS.find(c => c.id === id) || CATS[CATS.length - 1];
+  let expenses = store.get('expenses', []);
+  let selCat = 'food', pendingDel = null;
+  const sum = a => a.reduce((s, e) => s + e.amt, 0);
+
+  CATS.forEach(c => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pill'; b.dataset.cat = c.id;
+    b.innerHTML = '<span class="dot"></span>'; b.querySelector('.dot').style.setProperty('--c', c.c);
+    b.append(c.name);
+    b.addEventListener('click', () => { selCat = c.id; renderCats(); });
+    $('expCats').appendChild(b);
+  });
+  function renderCats() { document.querySelectorAll('#expCats .pill').forEach(b => b.setAttribute('aria-pressed', b.dataset.cat === selCat)); }
+  renderCats();
+
+  const expAmt = $('expAmt');
+  expAmt.addEventListener('change', () => { $('btnAddExp').disabled = !parseVnd(expAmt.value); });
+  $('btnAddExp').addEventListener('click', () => {
+    const amt = parseVnd(expAmt.value); if (!amt) return;
+    expenses.push({ id: uid(), t: Date.now(), cat: selCat, amt, note: $('expNote').value.trim() });
+    store.set('expenses', expenses);
+    expAmt.value = ''; $('expNote').value = ''; $('btnAddExp').disabled = true;
+    renderExp();
+  });
+
+  function setTot(id, v) { $(id).textContent = fmtEur(v / rate) + ' €'; $(id + 'V').textContent = fmtVnd(v) + ' ₫'; }
+  function renderExp() {
+    const today = dayKey(Date.now());
+    const all = sum(expenses);
+    const days = [...new Set(expenses.map(e => dayKey(e.t)))];
+    setTot('totToday', sum(expenses.filter(e => dayKey(e.t) === today)));
+    setTot('totAll', all);
+    setTot('totAvg', days.length ? all / days.length : 0);
+
+    const bars = $('bars'); bars.innerHTML = '';
+    const byCat = CATS.map(c => ({ c, v: sum(expenses.filter(e => e.cat === c.id)) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
+    $('catBox').hidden = !byCat.length;
+    const max = byCat.length ? byCat[0].v : 1;
+    byCat.forEach(({ c, v }) => {
+      const r = document.createElement('div'); r.className = 'bar'; r.style.setProperty('--c', c.c);
+      r.innerHTML = `<span class="nm"><span class="dot"></span><span></span></span><span class="am"></span><span class="tr"><span></span></span>`;
+      r.querySelector('.nm span:last-child').textContent = c.name;
+      r.querySelector('.am').textContent = `${fmtEur(v / rate)} € · ${Math.round(v / all * 100)} %`;
+      r.querySelector('.tr span').style.width = (v / max * 100) + '%';
+      bars.appendChild(r);
+    });
+
+    const list = $('expList'); list.innerHTML = '';
+    if (!expenses.length) {
+      list.innerHTML = '<div class="row"><span class="empty">Noch keine Ausgaben. Betrag eintippen, Kategorie wählen, „Eintragen“ – fertig.</span></div>';
+      return;
+    }
+    let curDay = null, box = null;
+    [...expenses].sort((a, b) => b.t - a.t).forEach(e => {
+      const dk = dayKey(e.t);
+      if (dk !== curDay) {
+        curDay = dk;
+        const h = document.createElement('div'); h.className = 'day';
+        h.innerHTML = '<span></span><span></span>';
+        h.firstChild.textContent = dk === today ? 'Heute' : new Date(e.t).toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+        h.lastChild.textContent = fmtEur(sum(expenses.filter(x => dayKey(x.t) === dk)) / rate) + ' €';
+        list.appendChild(h);
+        box = document.createElement('div'); box.className = 'list'; list.appendChild(box);
+      }
+      const c = catOf(e.cat);
+      const it = document.createElement('div'); it.className = 'item';
+      it.innerHTML = `<span class="dot"></span><span class="what"><div class="t1"></div><div class="t2"></div></span><span class="amt"><b></b><small></small></span><button type="button" class="del" aria-label="Eintrag löschen">×</button>`;
+      it.querySelector('.dot').style.setProperty('--c', c.c);
+      it.querySelector('.t1').textContent = e.note || c.name;
+      it.querySelector('.t2').textContent = (e.note ? c.name + ' · ' : '') + new Date(e.t).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+      it.querySelector('.amt b').textContent = fmtVnd(e.amt) + ' ₫';
+      it.querySelector('.amt small').textContent = fmtEur(e.amt / rate) + ' €';
+      const del = it.querySelector('.del');
+      if (pendingDel === e.id) { del.textContent = 'Löschen?'; del.classList.add('confirm'); }
+      del.addEventListener('click', () => {
+        if (pendingDel === e.id) { expenses = expenses.filter(x => x.id !== e.id); store.set('expenses', expenses); pendingDel = null; }
+        else { pendingDel = e.id; setTimeout(() => { if (pendingDel === e.id) { pendingDel = null; renderExp(); } }, 3000); }
+        renderExp();
+      });
+      box.appendChild(it);
+    });
+  }
+
+  /* ---------- Startseite ---------- */
+  function renderHome() {
+    const st = `1 € = ${fmtVnd(rate)} ₫ · ` + (fresh ? 'Kurs aktuell' : `Kurs vom ${fmtDate(rateDate)}`);
+    $('homeRate').textContent = st; $('homeRate').className = 'sub' + (fresh ? '' : ' offline');
+    const s = curStay(); $('tileStay').textContent = s ? s.name || s.addr : 'Noch keine eingetragen';
+    const t = sum(expenses.filter(e => dayKey(e.t) === dayKey(Date.now())));
+    $('tileExp').textContent = expenses.length ? `Heute ${fmtEur(t / rate)} €` : 'Essen, Aktivitäten, Transport';
+  }
+
+  /* ---------- Rendern ---------- */
   function render() {
     $('r1').textContent = fmtVnd(rate);
     $('r2').textContent = fmtEur(100000 / rate);
@@ -214,100 +621,11 @@
     st.textContent = fresh ? `Kurs vom ${fmtDate(rateDate)}, aktuell` : `Kurs vom ${fmtDate(rateDate)}, gespeichert (offline)`;
     st.className = fresh ? '' : 'offline';
     if (document.activeElement === eur) fromEur(); else fromVnd();
-    renderChange();
+    showPrice.dispatchEvent(new Event('change'));
+    renderStays(); renderExp(); renderHome();
   }
-  vnd.addEventListener('input', fromVnd);
-  eur.addEventListener('input', fromEur);
-  eur.addEventListener('blur', () => { if (eur.value.trim()) eur.value = fmtEur(parseEur(eur.value)); });
-  [vnd, eur].forEach(el => el.addEventListener('focus', () => el.select()));
-  document.querySelectorAll('.quick button').forEach(b =>
-    b.addEventListener('click', () => { vnd.value = b.dataset.v; fromVnd(); }));
-
-  /* ---------- Wechselgeld ---------- */
-  // Farben angelehnt an die echten Scheine
-  const NOTES = [
-    { v: 500000, n: '#3aa6c4', t: '#08252d' },
-    { v: 200000, n: '#b8552f', t: '#ffffff' },
-    { v: 100000, n: '#5f7f2e', t: '#ffffff' },
-    { v: 50000,  n: '#b0507e', t: '#ffffff' },
-    { v: 20000,  n: '#2f6db5', t: '#ffffff' },
-    { v: 10000,  n: '#b0843a', t: '#1e1404' },
-    { v: 5000,   n: '#5b6fa8', t: '#ffffff' },
-    { v: 2000,   n: '#857563', t: '#ffffff' },
-    { v: 1000,   n: '#7f7f45', t: '#ffffff' },
-  ];
-  const noteOf = v => NOTES.find(x => x.v === v);
-  const price = $('price'), given = $('given');
-  let counted = [];
-
-  function noteButton(note, onTap) {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'note';
-    b.style.setProperty('--n', note.n); b.style.setProperty('--t', note.t);
-    b.textContent = fmtVnd(note.v);
-    b.setAttribute('aria-label', fmtVnd(note.v) + ' Dong');
-    b.addEventListener('click', () => onTap(note.v));
-    return b;
-  }
-  NOTES.forEach(note => {
-    $('givenNotes').appendChild(noteButton(note, v => { given.value = fmtVnd(parseVnd(given.value) + v); renderChange(); }));
-    $('backNotes').appendChild(noteButton(note, v => { counted.push(v); renderChange(); }));
-  });
-
-  document.querySelectorAll('.vndin').forEach(el => {
-    el.addEventListener('input', () => { const n = parseVnd(el.value); el.value = n ? fmtVnd(n) : ''; renderChange(); });
-    el.addEventListener('focus', () => el.select());
-  });
-  document.querySelectorAll('.k000').forEach(b => b.addEventListener('click', () => {
-    const el = $(b.dataset.for); const n = parseVnd(el.value);
-    if (n) { el.value = fmtVnd(n * 1000); renderChange(); }
-  }));
-  $('clearGiven').addEventListener('click', () => { given.value = ''; renderChange(); });
-  $('clearBack').addEventListener('click', () => { counted = []; renderChange(); });
-  $('resetAll').addEventListener('click', () => { price.value = ''; given.value = ''; counted = []; renderChange(); });
-
-  function renderChange() {
-    const p = parseVnd(price.value), g = parseVnd(given.value), res = $('result');
-    const diff = g - p;
-    res.className = 'result';
-    $('countBox').hidden = true;
-    if (!p || !g) {
-      res.innerHTML = '<span class="empty">Preis und gegebenen Betrag eingeben, dann steht hier das Wechselgeld.</span>';
-      return;
-    }
-    if (diff < 0) {
-      res.className = 'result bad';
-      res.innerHTML = `<span class="label">Zu wenig gegeben</span><span class="big">es fehlen ${fmtVnd(-diff)} ₫</span>`;
-      return;
-    }
-    if (diff === 0) {
-      res.innerHTML = `<span class="label">Wechselgeld</span><span class="big">0 ₫</span><span class="small">Passt genau.</span>`;
-      return;
-    }
-    res.innerHTML = `<span class="label">Du bekommst zurück</span><span class="big">${fmtVnd(diff)} ₫</span><span class="small">≈ ${fmtEur(diff / rate)} €</span>`;
-
-    $('countBox').hidden = false;
-    const sum = counted.reduce((a, b) => a + b, 0);
-    const chk = $('check');
-    if (!counted.length) { chk.className = 'check warn'; chk.textContent = `Noch nichts gezählt, erwartet: ${fmtVnd(diff)} ₫`; }
-    else if (sum < diff) { chk.className = 'check warn'; chk.textContent = `Es fehlen noch ${fmtVnd(diff - sum)} ₫`; }
-    else if (sum === diff) { chk.className = 'check good'; chk.textContent = '✓ Stimmt genau'; }
-    else { chk.className = 'check bad'; chk.textContent = `${fmtVnd(sum - diff)} ₫ zu viel gezählt`; }
-    $('countSum').textContent = counted.length ? `Gezählt: ${fmtVnd(sum)} ₫` : '';
-
-    const chips = $('chips'); chips.innerHTML = '';
-    counted.forEach((v, i) => {
-      const note = noteOf(v), c = document.createElement('button');
-      c.type = 'button'; c.className = 'chip';
-      c.style.setProperty('--n', note.n); c.style.setProperty('--t', note.t);
-      c.textContent = fmtVnd(v);
-      c.setAttribute('aria-label', fmtVnd(v) + ' entfernen');
-      c.addEventListener('click', () => { counted.splice(i, 1); renderChange(); });
-      chips.appendChild(c);
-    });
-  }
-
   render();
+  go(location.hash.slice(1));
 
   /* ---------- Live-Kurs ---------- */
   async function update() {
@@ -318,7 +636,7 @@
         rate = d.rates.VND;
         rateDate = new Date(d.time_last_update_unix * 1000).toISOString().slice(0, 10);
         fresh = true;
-        try { localStorage.setItem('vndRate', JSON.stringify({ rate, date: rateDate })); } catch (e) {}
+        store.set('vndRate', { rate, date: rateDate });
         render();
       }
     } catch (e) { /* offline: gespeicherter Kurs bleibt */ }

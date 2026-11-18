@@ -1,4 +1,4 @@
-const CACHE = 'dong-euro-v3';
+const CACHE = 'dong-euro-v4';
 const FILES = ['./', 'index.html', 'manifest.json', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
