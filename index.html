@@ -7,192 +7,246 @@
 <meta name="apple-mobile-web-app-title" content="Dong Euro">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#f3f6f5" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0e1513" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#1A1A1C">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
+<link rel="preload" href="fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  @font-face { font-family: 'Bricolage'; src: url(fonts/bricolage-latin.woff2) format('woff2'); font-weight: 200 800; font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Bricolage'; src: url(fonts/bricolage-latin-ext.woff2) format('woff2'); font-weight: 200 800; font-display: swap;
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Bricolage'; src: url(fonts/bricolage-vietnamese.woff2) format('woff2'); font-weight: 200 800; font-display: swap;
+    unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+
+  /* Design-Regeln
+     Farben: Schwarz #1A1A1C · Graphit #2E2E33 · Weiß #FFFFFF · Lime #A0FF51 · Violett #603DF0
+     Ecken:  jede Karte genau eine spitze Ecke (8px), sonst 28px.
+             Große/breite Karten: unten links spitz (.cb). Paare: erste oben rechts (.c1), zweite unten links (.cb).
+     Abheben: Innenschatten mit Lichtkante oben, dunkler Kante unten – farbige Karten im eigenen Ton. */
   :root {
-    --bg: #f3f6f5; --card: #ffffff; --fg: #14221e; --muted: #5d6f69; --line: #d8e2de; --accent: #0f7a66; --accent-bg: #dcefe9;
-    --warn: #9a5b00; --bad: #b3261e;
-    --t1: #0f7a66; --t2: #c2603a; --t3: #3a6fb5; --t4: #8a5cc2; --t5: #b5822a; --t6: #4f8a2e; --t7: #c0392b;
-    --ok: #3f9a4a; --no: #c0392b; --sea: #2f7fc4; --info: #8a8f8c;
-    --font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-    color-scheme: light;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0e1513; --card: #17211e; --fg: #e8f0ed; --muted: #93a7a0; --line: #2a3833; --accent: #3cc5a6; --accent-bg: #143229;
-      --warn: #e0a54a; --bad: #ff8a80;
-      --t1: #3cc5a6; --t2: #f08a62; --t3: #6fa3eb; --t4: #b590f0; --t5: #e6b45a; --t6: #8fcf68; --t7: #ff7a6b;
-      --ok: #6fcf7a; --no: #ff7a6b; --sea: #6fb0f0; --info: #93a7a0;
-      color-scheme: dark;
-    }
+    --bg: #1A1A1C; --card: #2E2E33; --card-hi: #4B4B53; --card-lo: #151517; --line: #4B4B53;
+    --fg: #FFFFFF; --muted: #C9C6D6; --ink: #1A1A1C;
+    --lime: #A0FF51; --lime-hi: #C8FF94; --lime-lo: #6FB82E;
+    --violet: #603DF0; --violet-hi: #8466F5; --violet-lo: #3F22B8; --violet-soft: #E6E0FF;
+    --r: 28px; --rs: 8px;
+    --display: 'Bricolage', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    --font: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    color-scheme: dark;
   }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
-  html, body { margin: 0; min-height: 100%; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); }
   body {
-    background: var(--bg); color: var(--fg); font-family: var(--font);
+    color: var(--fg); font-family: var(--font); font-size: 16px;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
-    padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
-    -webkit-text-size-adjust: 100%;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
+    -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent;
   }
   main { max-width: 440px; margin: 0 auto; }
   section { display: flex; flex-direction: column; gap: 14px; }
-  h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
-  h2 { font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 10px 0 -4px; }
-  button { font-family: var(--font); touch-action: manipulation; }
-  button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button { font-family: var(--font); touch-action: manipulation; color: inherit; }
+  button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+  .display { font-family: var(--display); }
 
-  /* Startseite */
-  .hello { display: flex; flex-direction: column; gap: 2px; margin: 8px 0 18px; }
-  .hello .sub { color: var(--muted); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
-  .hello .sub.offline { color: var(--warn); }
-  .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .tile {
-    text-align: left; background: var(--card); color: var(--fg); border: 1px solid var(--line); border-radius: 20px;
-    padding: 16px; min-height: 132px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; cursor: pointer;
-  }
-  .tile:active { transform: scale(0.98); }
-  .tile.wide { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: center; }
-  .tile .ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--c); color: #fff; flex: none; }
-  @media (prefers-color-scheme: dark) { .tile .ic { color: #0e1513; } }
-  .tile .ic svg { width: 24px; height: 24px; }
-  .tile .tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  .tile.wide .tx { flex: 1; }
-  .tile .tt { font-size: 1.05rem; font-weight: 700; }
-  .tile .ts { font-size: 0.82rem; color: var(--muted); line-height: 1.3; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+  /* Karten, Ecken, Abheben */
+  .card { background: var(--card); color: var(--fg); box-shadow: inset 0 3px 0 var(--card-hi), inset 0 -4px 0 var(--card-lo); border: 0; }
+  .card.lime { background: var(--lime); color: var(--ink); box-shadow: inset 0 3px 0 var(--lime-hi), inset 0 -4px 0 var(--lime-lo); }
+  .card.violet { background: var(--violet); color: var(--fg); box-shadow: inset 0 3px 0 var(--violet-hi), inset 0 -4px 0 var(--violet-lo); }
+  .cb { border-radius: var(--r) var(--r) var(--r) var(--rs); }
+  .c1 { border-radius: var(--r) var(--rs) var(--r) var(--r); }
+  .pad { padding: 16px; }
+  .stack { display: flex; flex-direction: column; gap: 10px; }
 
-  /* Kopfzeile einer Funktion */
-  .bar-top { display: flex; align-items: center; gap: 4px; margin: 0 0 2px -6px; }
-  .back { display: inline-flex; align-items: center; gap: 2px; border: 0; background: none; color: var(--accent); font-size: 1rem; font-weight: 500; padding: 8px 6px; cursor: pointer; }
-  .back svg { width: 20px; height: 20px; }
+  .ic { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--fg); color: var(--ink); }
+  .ic svg { width: 20px; height: 20px; }
+  .ic.lime { background: var(--lime); color: var(--ink); }
+  .ic.violet { background: var(--violet); color: var(--fg); }
+  .ic.ink { background: var(--ink); color: var(--lime); }
 
-  .row { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 6px; }
-  .row:focus-within { border-color: var(--accent); }
-  label, .label { font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  /* Typo */
+  h1.title { font-family: var(--display); font-size: 44px; font-weight: 700; line-height: 0.95; letter-spacing: -0.03em; margin: 4px 0 4px; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 21px; font-weight: 500; letter-spacing: -0.01em; margin: 14px 0 -2px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 13px; }
+  .hint { font-size: 14px; color: var(--muted); line-height: 1.5; margin: 0; }
+  .label { font-size: 13px; color: var(--muted); }
+  .card.lime .label, .card.lime .muted { color: #2F4A10; }
+  .card.violet .label, .card.violet .muted { color: var(--violet-soft); }
+
+  /* Kopfzeile Unterseiten */
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .back { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+  .back svg { width: 22px; height: 22px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 12px; }
+  .chip .dotlive { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
+  .chip.off .dotlive { background: var(--muted); }
+
+  /* Knöpfe */
+  .pillbtn { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; border: 0; border-radius: 999px; padding: 6px 6px 6px 22px; min-height: 56px;
+    background: var(--lime); color: var(--ink); font-weight: 650; font-size: 17px; cursor: pointer; text-align: left; }
+  .pillbtn .ic { width: 44px; height: 44px; background: var(--ink); color: var(--lime); }
+  .pillbtn.dark { background: var(--ink); color: var(--lime); }
+  .pillbtn.dark .ic { background: var(--lime); color: var(--ink); }
+  .pillbtn:disabled { opacity: 0.35; }
+  .pillbtn:active { transform: scale(0.985); }
+  .outline { border: 1.5px solid var(--fg); background: transparent; color: var(--fg); border-radius: 999px; padding: 12px 18px; font-weight: 600; font-size: 15px; cursor: pointer; }
+  .link { background: none; border: 0; padding: 6px 0; color: var(--lime); font-weight: 600; font-size: 15px; cursor: pointer; text-decoration: none; }
+  .card.lime .link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  .link.quiet { color: var(--muted); font-weight: 500; }
+  .link.confirm { color: var(--fg); background: var(--violet); border-radius: 999px; padding: 6px 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { font-weight: 550; font-size: 14px; color: var(--fg); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; padding: 9px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+  .pill[aria-pressed="true"], .pill:active { background: var(--fg); color: var(--ink); border-color: var(--fg); }
+  .pill .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
+
+  /* Eingaben */
   .field { display: flex; align-items: baseline; gap: 8px; }
-  input.num { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: 700 2rem/1.2 var(--font); font-variant-numeric: tabular-nums; padding: 0; outline: none; }
-  input.num::placeholder { color: var(--line); font-weight: 500; }
-  input.txt, textarea.txt { width: 100%; font: 400 1rem var(--font); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; outline: none; }
-  textarea.txt { resize: vertical; min-height: 64px; }
-  input.txt:focus, textarea.txt:focus { border-color: var(--accent); }
-  .cur { font-size: 1.4rem; font-weight: 500; color: var(--muted); }
-  .k000 { font-weight: 600; font-size: 0.9rem; color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; cursor: pointer; align-self: center; }
-  .swap { text-align: center; color: var(--muted); font-size: 1.1rem; line-height: 1; }
+  input.num { flex: 1; min-width: 0; border: 0; background: transparent; color: inherit; font: 700 40px/1.15 var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; padding: 0; outline: none; }
+  input.num::placeholder { color: var(--line); }
+  .card.lime input.num::placeholder { color: var(--lime-lo); }
+  .cur { font-size: 22px; font-weight: 500; color: var(--muted); }
+  .card.lime .cur { color: #2F4A10; }
+  .k000 { font-weight: 650; font-size: 14px; color: var(--lime); background: transparent; border: 1.5px solid var(--line); border-radius: 12px; padding: 7px 10px; cursor: pointer; align-self: center; }
+  input.txt, textarea.txt { width: 100%; font: 400 16px var(--font); color: var(--fg); background: var(--bg); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; outline: none; }
+  textarea.txt { resize: vertical; min-height: 70px; }
+  input.txt:focus, textarea.txt:focus { border-color: var(--lime); }
+  input.txt::placeholder, textarea.txt::placeholder { color: #8C8A96; }
 
-  .quick { display: flex; flex-wrap: wrap; gap: 8px; }
-  .pill { font-weight: 500; font-size: 0.9rem; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; }
-  .pill:active { border-color: var(--accent); color: var(--accent); }
-  .pill[aria-pressed="true"] { background: var(--accent-bg); border-color: var(--accent); }
-  .rate { font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin: 6px 0 0; }
-  .rate strong { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
-  .offline { color: var(--warn); }
+  /* ---------- Startseite ---------- */
+  .hello { margin: 10px 0 6px; }
+  .hello .l1 { font-family: var(--display); font-size: 62px; font-weight: 700; line-height: 0.95; letter-spacing: -0.035em; }
+  .hello .l2 { font-family: var(--display); font-size: 34px; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; margin-top: 8px; }
+  .hello .l3 { font-family: var(--display); font-size: 34px; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; margin-top: 4px; display: flex; align-items: center; gap: 10px; }
+  .hello .ring { border: 2px solid var(--fg); border-radius: 999px; padding: 0 13px; line-height: 1.2; }
+  .duo { display: inline-flex; margin-left: auto; }
+  .duo span { width: 36px; height: 36px; border-radius: 50%; }
+  .duo span:first-child { background: var(--lime); }
+  .duo span:last-child { background: var(--violet); margin-left: -13px; display: grid; place-items: center; }
+  .duo svg { width: 18px; height: 18px; }
 
-  .primary { font-weight: 600; font-size: 1rem; color: #fff; background: var(--accent); border: 0; border-radius: 12px; padding: 13px 16px; cursor: pointer; }
-  @media (prefers-color-scheme: dark) { .primary { color: #06231c; } }
-  .primary:disabled { opacity: 0.4; }
-  .secondary { font-weight: 600; font-size: 0.95rem; color: var(--accent); background: var(--accent-bg); border: 0; border-radius: 12px; padding: 12px 14px; cursor: pointer; }
-  .actions { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
-  .link { font-weight: 500; font-size: 0.92rem; color: var(--accent); background: none; border: 0; padding: 6px 0; cursor: pointer; text-decoration: none; }
-  .link.danger { color: var(--bad); }
-  .hint { font-size: 0.85rem; color: var(--muted); line-height: 1.45; margin: 0; }
-  .empty { color: var(--muted); font-size: 0.95rem; }
+  .hero { padding: 18px 18px 16px; margin-top: 10px; }
+  .hero .top { display: flex; justify-content: space-between; align-items: center; }
+  .hero .tag { font-size: 13px; border-left: 3px solid var(--violet); padding-left: 8px; }
+  .hero .rate { font-family: var(--display); font-size: 52px; font-weight: 700; letter-spacing: -0.035em; line-height: 1; margin-top: 10px; font-variant-numeric: tabular-nums; }
+  .hero .rate small { font-size: 24px; opacity: 0.55; }
+  .hero .sub { font-size: 13px; margin: 4px 0 14px; }
+  .hero .ic { width: 34px; height: 34px; cursor: pointer; border: 0; }
 
-  .tip { font-size: 0.88rem; line-height: 1.5; color: var(--muted); background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-  .tip strong { color: var(--fg); }
-  .sw { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 2px; vertical-align: -0.05em; }
+  .bento { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+  .tile { padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; min-height: 118px; text-align: left; cursor: pointer; font: inherit; }
+  .tile:active { transform: scale(0.98); }
+  .tile .tt { font-family: var(--display); font-size: 19px; font-weight: 500; letter-spacing: -0.01em; }
+  .tile .ts { font-size: 12.5px; margin-top: 3px; }
+  .tile.tall { grid-row: span 2; min-height: 250px; }
+  .tile.tall .tt { font-size: 27px; }
+  .tile .row1 { display: flex; justify-content: space-between; align-items: flex-start; }
+  .tile .row1 svg.arr { width: 20px; height: 20px; }
+  .mini { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .mini span { border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+  .mini .on { background: var(--lime); color: var(--ink); }
+  .mini .off { border: 1.5px solid var(--fg); }
+  .wide { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 14px 14px 14px 16px; }
+  .wide .main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; font: inherit; color: inherit; }
+  .wide .ic { width: 46px; height: 46px; }
+  .wide .nm { font-family: var(--display); font-size: 19px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .smallbtn { background: var(--lime); color: var(--ink); border: 0; border-radius: 999px; padding: 10px 15px; font-weight: 650; font-size: 14px; cursor: pointer; flex: none; }
+  .big-num { font-family: var(--display); font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .big-num small { font-size: 16px; color: var(--muted); font-weight: 500; }
+  .track { height: 7px; border-radius: 999px; background: var(--bg); overflow: hidden; }
+  .track span { display: block; height: 100%; border-radius: 999px; background: var(--lime); }
 
-  /* Unterkünfte */
-  .stay-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .badge { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); background: var(--accent-bg); border-radius: 6px; padding: 3px 7px; }
-  .stay-name { font-size: 1.12rem; font-weight: 700; }
-  .stay-addr { font-size: 0.98rem; line-height: 1.4; }
-  .stay.other .stay-name { font-size: 1rem; }
+  /* ---------- Umrechnen ---------- */
+  .swapbtn { display: flex; justify-content: center; margin: -22px 0; position: relative; z-index: 1; pointer-events: none; }
+  .swapbtn .ic { width: 46px; height: 46px; box-shadow: 0 0 0 6px var(--bg); }
 
-  /* Sätze */
-  .phrases { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 14px; }
-  .prow { display: flex; align-items: stretch; border-top: 1px solid var(--line); }
-  .prow:first-child { border-top: 0; }
-  .phrase { flex: 1; min-width: 0; text-align: left; background: transparent; border: 0; padding: 12px 8px 12px 16px; cursor: pointer; color: var(--fg); display: flex; flex-direction: column; gap: 2px; }
-  .phrase:active { background: var(--accent-bg); }
-  .spk { flex: none; width: 52px; border: 0; background: transparent; color: var(--accent); cursor: pointer; display: grid; place-items: center; }
-  .spk svg { width: 22px; height: 22px; }
-  .spk:active { background: var(--accent-bg); }
-  #voiceHint { border-color: var(--warn); }
+  /* ---------- Sätze ---------- */
+  .phrase { display: flex; align-items: center; gap: 10px; padding: 14px 12px 14px 18px; }
+  .phrase .txt { flex: 1; min-width: 0; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: inherit; display: flex; flex-direction: column; gap: 3px; }
+  .phrase .vi { font-family: var(--display); font-size: 19px; font-weight: 500; line-height: 1.3; }
+  .phrase .de { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
+  .phrase .spk { width: 44px; height: 44px; border: 0; cursor: pointer; }
 
-  /* Speisekarte */
-  .search { width: 100%; font: 400 1.05rem var(--font); color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; outline: none; }
-  .search:focus { border-color: var(--accent); }
-  .words { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
-  .word { text-align: left; border: 1px solid var(--line); border-left: 4px solid var(--k); background: var(--card); color: var(--fg); border-radius: 10px; padding: 9px 10px; cursor: pointer; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-  .word .vi { font-weight: 700; font-size: 1.02rem; overflow-wrap: anywhere; }
-  .word .de { font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
-  .word.wide { grid-column: 1 / -1; }
-  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.85rem; color: var(--muted); }
-  .legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .legend i { width: 12px; height: 12px; border-radius: 3px; background: var(--k); }
+  /* ---------- Speisekarte ---------- */
+  .words { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+  .word { text-align: left; padding: 12px 14px 13px; cursor: pointer; font: inherit; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .word .vi { font-family: var(--display); font-weight: 700; font-size: 19px; overflow-wrap: anywhere; }
+  .word .de { font-size: 12.5px; overflow-wrap: anywhere; }
+  .word.no .vi { text-decoration: line-through; text-decoration-thickness: 2px; }
+  .word.full { grid-column: 1 / -1; }
+  .card.lime.word .de { color: #2F4A10; }
+  .card.violet.word .de { color: var(--violet-soft); }
+  .card.word:not(.lime):not(.violet) .de { color: var(--muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; }
+  .legend span { font-size: 13px; border-radius: 999px; padding: 6px 12px; }
 
-  /* Notfall */
-  .sos-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .sos-num { text-decoration: none; text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 6px; color: var(--fg); display: flex; flex-direction: column; gap: 2px; }
-  .sos-num b { font-size: 1.6rem; color: var(--bad); font-variant-numeric: tabular-nums; }
-  .sos-num span { font-size: 0.82rem; color: var(--muted); }
-  .contact { display: flex; flex-direction: column; gap: 4px; font-size: 0.95rem; line-height: 1.4; }
-  .contact b { font-size: 1.02rem; }
-  .contact a { color: var(--accent); text-decoration: none; font-weight: 500; font-variant-numeric: tabular-nums; }
-  .phrase .vi { font-size: 1.08rem; font-weight: 600; line-height: 1.35; }
-  .phrase .de { font-size: 0.85rem; color: var(--muted); line-height: 1.35; }
+  /* ---------- Notfall ---------- */
+  .sos-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 8px; }
+  .sos-num { text-decoration: none; color: var(--fg); text-align: center; padding: 12px 4px; display: flex; flex-direction: column; gap: 2px; }
+  .sos-num + .sos-num { border-left: 1.5px solid var(--violet-hi); }
+  .sos-num b { font-family: var(--display); font-size: 38px; font-weight: 700; letter-spacing: -0.02em; }
+  .sos-num span { font-size: 13px; color: var(--violet-soft); }
+  .contact { display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 1.45; }
+  .contact b { font-family: var(--display); font-size: 19px; font-weight: 500; }
+  .contact a { color: var(--lime); text-decoration: none; font-weight: 600; font-variant-numeric: tabular-nums; }
 
-  /* Großanzeige */
+  /* ---------- Unterkunft ---------- */
+  .stay-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .stay-name { font-family: var(--display); font-size: 22px; font-weight: 600; line-height: 1.15; }
+  .stay-addr { font-size: 15px; line-height: 1.45; margin: 6px 0 12px; }
+  .badge { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px; background: var(--ink); color: var(--lime); white-space: nowrap; }
+
+  /* ---------- Ausgaben ---------- */
+  .totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 16px 6px; }
+  .tot { padding: 0 10px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .tot + .tot { border-left: 1.5px solid var(--line); }
+  .tot .e { font-family: var(--display); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tot .v { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .bars { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .bar { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; font-size: 14px; align-items: center; }
+  .bar .nm { display: flex; align-items: center; gap: 8px; }
+  .bar .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+  .bar .am { font-variant-numeric: tabular-nums; color: var(--muted); }
+  .bar .tr { grid-column: 1 / -1; height: 7px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+  .bar .tr span { display: block; height: 100%; background: var(--c); border-radius: 999px; }
+  .dayhead { display: flex; justify-content: space-between; align-items: baseline; padding: 0 2px; }
+  .dayhead b { font-family: var(--display); font-size: 19px; font-weight: 500; }
+  .dayhead span { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .item { display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center; padding: 12px 0; border-top: 1.5px solid var(--line); }
+  .item:first-child { border-top: 0; padding-top: 2px; }
+  .item:last-child { padding-bottom: 2px; }
+  .item .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+  .item .what { min-width: 0; }
+  .item .t1 { font-size: 15px; overflow-wrap: anywhere; }
+  .item .t2 { font-size: 12.5px; color: var(--muted); }
+  .item .amt { text-align: right; font-variant-numeric: tabular-nums; }
+  .item .amt b { display: block; font-size: 15px; }
+  .item .amt small { font-size: 12.5px; color: var(--muted); }
+  .del { border: 0; background: none; color: var(--muted); font-size: 20px; padding: 4px 6px; cursor: pointer; line-height: 1; }
+  .del.confirm { color: var(--fg); background: var(--violet); border-radius: 999px; font-size: 12px; font-weight: 700; padding: 6px 10px; }
+
+  /* ---------- Großanzeige ---------- */
   #show {
-    position: fixed; inset: 0; z-index: 50; background: var(--card); color: var(--fg);
-    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 18px; text-align: center;
-    padding: calc(env(safe-area-inset-top, 0px) + 40px) max(24px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(24px, env(safe-area-inset-left, 0px));
+    position: fixed; inset: 0; z-index: 50; background: var(--bg); color: var(--fg);
+    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; text-align: center;
+    padding: calc(env(safe-area-inset-top, 0px) + 70px) max(24px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 28px) max(24px, env(safe-area-inset-left, 0px));
     cursor: pointer;
   }
-  #show .s-pre { font-size: 1.3rem; font-weight: 600; color: var(--muted); }
-  #show .s-vi { font-size: clamp(2rem, 9vw, 3.4rem); font-weight: 700; line-height: 1.25; text-wrap: balance; overflow-wrap: anywhere; white-space: pre-line; }
-  #show.price .s-vi { font-size: clamp(3rem, 17vw, 7rem); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-  #show.long .s-vi { font-size: clamp(1.6rem, 7vw, 2.4rem); }
-  #show .s-de { font-size: 1rem; color: var(--muted); max-width: 32ch; }
-  #show .s-say { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 1rem; color: var(--accent); background: var(--accent-bg); border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; }
-  #show .s-say svg { width: 20px; height: 20px; }
-  #show .s-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(16px, env(safe-area-inset-right, 0px)); font-size: 0.9rem; color: var(--muted); }
+  #show .s-pre { font-size: 20px; font-weight: 500; color: var(--muted); }
+  #show .s-vi { font-family: var(--display); font-size: clamp(34px, 10vw, 58px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; overflow-wrap: anywhere; white-space: pre-line; }
+  #show.price .s-vi { font-size: clamp(60px, 19vw, 120px); font-variant-numeric: tabular-nums; letter-spacing: -0.04em; color: var(--lime); }
+  #show.long .s-vi { font-size: clamp(28px, 8vw, 40px); }
+  #show .s-de { font-size: 17px; color: var(--muted); max-width: 32ch; line-height: 1.45; }
+  #show .s-say { display: inline-flex; align-items: center; gap: 10px; font-weight: 650; font-size: 17px; background: var(--lime); color: var(--ink); border: 0; border-radius: 999px; padding: 8px 22px 8px 8px; cursor: pointer; }
+  #show .s-say .ic { width: 42px; height: 42px; background: var(--ink); color: var(--lime); }
+  #show .s-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: max(16px, env(safe-area-inset-right, 0px)); }
 
-  /* Ausgaben */
-  .cats { display: flex; flex-wrap: wrap; gap: 8px; }
-  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
-  .pill .dot { margin-right: 6px; }
-  .totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .tot { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .tot .k { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-  .tot .e { font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .tot .v { font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-  .bars { display: flex; flex-direction: column; gap: 8px; }
-  .bar { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; font-size: 0.88rem; align-items: center; }
-  .bar .nm { display: flex; align-items: center; gap: 6px; }
-  .bar .am { font-variant-numeric: tabular-nums; color: var(--muted); }
-  .bar .tr { grid-column: 1 / -1; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
-  .bar .tr span { display: block; height: 100%; background: var(--c); border-radius: 3px; }
-  .day { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 600; color: var(--muted); margin: 6px 2px -6px; font-variant-numeric: tabular-nums; }
-  .list { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 12px; }
-  .item { display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center; padding: 11px 12px 11px 14px; border-top: 1px solid var(--line); }
-  .item:first-child { border-top: 0; }
-  .item .what { min-width: 0; }
-  .item .t1 { font-size: 0.95rem; overflow-wrap: anywhere; }
-  .item .t2 { font-size: 0.78rem; color: var(--muted); }
-  .item .amt { text-align: right; font-variant-numeric: tabular-nums; }
-  .item .amt b { display: block; font-size: 0.95rem; }
-  .item .amt small { font-size: 0.78rem; color: var(--muted); }
-  .del { border: 0; background: none; color: var(--muted); font-size: 1.1rem; padding: 4px 6px; cursor: pointer; }
-  .del.confirm { color: var(--bad); font-size: 0.8rem; font-weight: 600; }
-
-  @media (prefers-reduced-motion: reduce) { .tile:active { transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .tile:active, .pillbtn:active { transform: none; } }
 </style>
 </head>
 <body>
@@ -201,215 +255,218 @@
   <!-- ============ Startseite ============ -->
   <section id="v-home">
     <div class="hello">
-      <h1>Xin chào!</h1>
-      <span class="sub" id="homeRate"></span>
+      <div class="l1">Xin chào,</div>
+      <div class="l2">unterwegs in</div>
+      <div class="l3" lang="vi"><span class="ring">Việt</span>Nam<span class="duo" aria-hidden="true"><span></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10h4a2 2 0 0 1 0 4h-4l-4 7h-3l2-7H7l-2 2H2l2-4-2-4h3l2 2h4L9 3h3z"/></svg></span></span></div>
     </div>
-    <div class="tiles">
-      <button type="button" class="tile wide" data-go="conv" style="--c:var(--t1)">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg></span>
-        <span class="tx"><span class="tt">Umrechnen</span><span class="ts">Dong ↔ Euro</span></span>
+
+    <div class="card lime hero cb">
+      <div class="top">
+        <span class="tag" id="heroTag">Kurs heute</span>
+        <button type="button" class="ic ink" data-go="conv" aria-label="Umrechnen öffnen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></button>
+      </div>
+      <div class="rate"><span id="heroRate"></span><small> ₫</small></div>
+      <div class="sub">für 1 € · 100.000 ₫ = <span id="heroRate2"></span> €</div>
+      <button type="button" class="pillbtn dark" data-go="conv">Umrechnen<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg></span></button>
+    </div>
+
+    <div class="bento">
+      <button type="button" class="card violet tile tall cb" data-go="phr">
+        <span class="row1"><span class="ic lime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H9l-5 4z"/></svg></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        <span><span class="tt" style="display:block">Sätze</span><span class="ts muted" style="display:block">Vegetarisch, Kaffee, Handeln</span>
+          <span class="mini" lang="vi"><span class="on">chay</span><span class="off">không đá</span></span></span>
       </button>
-      <button type="button" class="tile" data-go="price" style="--c:var(--t2)">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 12h10M12 9v6"/></svg></span>
-        <span class="tx"><span class="tt">Preis zeigen</span><span class="ts">Groß fürs Handeln</span></span>
+      <button type="button" class="card tile c1" data-go="price">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M12 9v6M9.5 10.5h3.5a1.5 1.5 0 0 1 0 3H11"/></svg></span>
+        <span class="tt">Preis zeigen</span>
       </button>
-      <button type="button" class="tile" data-go="stay" style="--c:var(--t3)">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
-        <span class="tx"><span class="tt">Unterkunft</span><span class="ts" id="tileStay"></span></span>
+      <button type="button" class="card tile cb" data-go="menu">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1.5-3 4-3 7h3"/></svg></span>
+        <span class="tt">Speisekarte</span>
       </button>
-      <button type="button" class="tile" data-go="phr" style="--c:var(--t4)">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg></span>
-        <span class="tx"><span class="tt">Sätze</span><span class="ts">Vegetarisch, Kaffee, Handeln</span></span>
+      <div class="card wide cb">
+        <button type="button" class="main" data-go="stay">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+          <span style="min-width:0"><span class="label" style="display:block">Unterkunft · aktuell</span><span class="nm" id="tileStay" style="display:block"></span></span>
+        </button>
+        <button type="button" class="smallbtn" id="tileStayShow">Fahrer</button>
+      </div>
+      <button type="button" class="card tile c1" data-go="exp">
+        <span class="label">Ausgaben heute</span>
+        <span class="big-num" id="tileExp"></span>
+        <span><span class="track"><span id="tileExpBar" style="width:0"></span></span><span class="label" id="tileExpSub" style="display:block;margin-top:6px;font-size:12px"></span></span>
       </button>
-      <button type="button" class="tile" data-go="menu" style="--c:var(--t6)">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 0 1 3 3v15H8a3 3 0 0 1-3-3z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
-        <span class="tx"><span class="tt">Speisekarte</span><span class="ts">Was ist drin?</span></span>
-      </button>
-      <button type="button" class="tile" data-go="exp" style="--c:var(--t5)">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>
-        <span class="tx"><span class="tt">Ausgaben</span><span class="ts" id="tileExp"></span></span>
-      </button>
-      <button type="button" class="tile" data-go="sos" style="--c:var(--t7)">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></span>
-        <span class="tx"><span class="tt">Notfall</span><span class="ts">113 · 114 · 115</span></span>
+      <button type="button" class="card tile cb" data-go="sos">
+        <span class="ic violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+        <span><span class="tt" style="display:block">Notfall</span><span class="ts muted" style="display:block">113 · 114 · 115</span></span>
       </button>
     </div>
   </section>
 
   <!-- ============ Umrechnen ============ -->
   <section id="v-conv" hidden>
-    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
-    <h1>Umrechnen</h1>
-    <div class="row">
-      <label for="vnd">Vietnamesische Dong</label>
+    <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><span class="chip" id="convChip"><span class="dotlive"></span><span></span></span></div>
+    <h1 class="title">Umrechnen</h1>
+    <div class="card pad c1">
+      <label class="label" for="vnd">Vietnamesische Dong</label>
       <div class="field">
         <input id="vnd" class="num" inputmode="numeric" autocomplete="off" placeholder="0" value="100.000">
         <button type="button" class="k000" id="vnd000" aria-label="Drei Nullen anhängen">000</button>
         <span class="cur">₫</span>
       </div>
     </div>
-    <div class="swap" aria-hidden="true">⇅</div>
-    <div class="row">
-      <label for="eur">Euro</label>
+    <div class="swapbtn" aria-hidden="true"><span class="ic lime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4v16M8 20l-3-3M8 20l3-3M16 20V4M16 4l-3 3M16 4l3 3"/></svg></span></div>
+    <div class="card lime pad cb">
+      <label class="label" for="eur">Euro</label>
       <div class="field">
         <input id="eur" class="num" inputmode="decimal" autocomplete="off" placeholder="0">
         <span class="cur">€</span>
       </div>
     </div>
-    <div class="quick" id="quickConv" aria-label="Schnellauswahl Dong">
+    <div class="pills" id="quickConv" aria-label="Schnellauswahl Dong">
       <button type="button" class="pill" data-v="10000">10.000 ₫</button>
       <button type="button" class="pill" data-v="50000">50.000 ₫</button>
       <button type="button" class="pill" data-v="100000">100.000 ₫</button>
       <button type="button" class="pill" data-v="200000">200.000 ₫</button>
       <button type="button" class="pill" data-v="500000">500.000 ₫</button>
     </div>
-    <p class="rate">
-      1 € = <strong id="r1"></strong> ₫<br>
-      100.000 ₫ = <strong id="r2"></strong> €<br>
-      <span id="status"></span>
-    </p>
-    <div class="tip">
-      <strong>Vorsicht, leicht zu verwechseln:</strong><br>
-      <span class="sw" style="background:#2f6db5"></span> 20.000 und <span class="sw" style="background:#3aa6c4"></span> 500.000 sind beide blau.<br>
-      <span class="sw" style="background:#b0843a"></span> 10.000 und <span class="sw" style="background:#5f7f2e"></span> 100.000 haben fast gleich viele Nullen.<br>
-      Auf Schildern steht oft „k“: 50k = 50.000 ₫.
+    <p class="hint">1 € = <b id="r1" style="color:var(--fg)"></b> ₫ · 100.000 ₫ = <b id="r2" style="color:var(--fg)"></b> € · <span id="status"></span></p>
+    <div class="card violet pad cb" style="font-size:15px;line-height:1.55">
+      <b class="display" style="font-size:19px;font-weight:600">Vorsicht, leicht zu verwechseln</b><br>
+      20.000 und 500.000 sind beide blau.<br>
+      10.000 und 100.000 – Nullen zählen!<br>
+      <span class="muted">Auf Schildern steht oft „k“: 50k = 50.000 ₫.</span>
     </div>
   </section>
 
   <!-- ============ Preis zeigen ============ -->
   <section id="v-price" hidden>
-    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
-    <h1>Preis zeigen</h1>
-    <div class="row">
-      <label for="showPrice">Betrag</label>
+    <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
+    <h1 class="title">Preis zeigen</h1>
+    <div class="card pad cb">
+      <label class="label" for="showPrice">Betrag</label>
       <div class="field">
-        <input id="showPrice" class="num vndin" inputmode="numeric" autocomplete="off" placeholder="z. B. 150.000">
+        <input id="showPrice" class="num vndin" inputmode="numeric" autocomplete="off" placeholder="150.000">
         <button type="button" class="k000" data-for="showPrice" aria-label="Drei Nullen anhängen">000</button>
         <span class="cur">₫</span>
       </div>
-      <span class="empty" id="showPriceEur">&nbsp;</span>
-      <button type="button" class="primary" id="btnShowPrice" disabled>Groß zeigen</button>
+      <div class="label" id="showPriceEur" style="margin-top:4px">&nbsp;</div>
     </div>
-    <p class="hint">Tipp: „150“ tippen und dann „000“ – das geht schneller als die vielen Nullen. Auf dem großen Bildschirm siehst du unten auch den Euro-Wert.</p>
+    <button type="button" class="pillbtn" id="btnShowPrice" disabled>Groß zeigen<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></span></button>
+    <p class="hint">Tipp: „150“ tippen und dann „000“ – das geht schneller als die vielen Nullen. Auf dem großen Bildschirm steht unten auch der Euro-Wert.</p>
   </section>
 
   <!-- ============ Unterkunft ============ -->
   <section id="v-stay" hidden>
-    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
-    <h1>Unterkunft</h1>
-    <div id="stayList" style="display:flex;flex-direction:column;gap:12px"></div>
-    <button type="button" class="secondary" id="btnAddStay">+ Unterkunft hinzufügen</button>
+    <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
+    <h1 class="title">Unterkunft</h1>
+    <div id="stayList" class="stack"></div>
+    <button type="button" class="outline" id="btnAddStay">+ Unterkunft hinzufügen</button>
 
-    <div class="row" id="stayForm" hidden>
-      <span class="label" id="stayFormTitle">Neue Unterkunft</span>
-      <label for="inMap">Google-Maps-Link</label>
+    <div class="card pad cb stack" id="stayForm" hidden>
+      <h2 style="margin:0" id="stayFormTitle">Neue Unterkunft</h2>
+      <label class="label" for="inMap">Google-Maps-Link</label>
       <input id="inMap" class="txt" inputmode="url" autocomplete="off" placeholder="https://maps.app.goo.gl/…">
-      <label for="inName">Name</label>
-      <input id="inName" class="txt" autocomplete="off" placeholder="z. B. Hotel in Hội An">
-      <label for="inAddr">Adresse</label>
+      <label class="label" for="inName">Name</label>
+      <input id="inName" class="txt" autocomplete="off" placeholder="Hotel in Hội An">
+      <label class="label" for="inAddr">Adresse</label>
       <textarea id="inAddr" class="txt" autocomplete="off" placeholder="Straße, Viertel, Stadt"></textarea>
-      <p class="hint">So bekommst du beides aus Google Maps: Ort öffnen → <strong>Teilen</strong> → Link kopieren. Für die Adresse lange auf die Adresszeile drücken → <strong>Kopieren</strong>. Die Adresse brauchst du, damit du sie auch offline dem Fahrer zeigen kannst.</p>
-      <div class="actions">
-        <button type="button" class="primary" id="btnSaveStay">Speichern</button>
-        <button type="button" class="link" id="btnCancelStay">Abbrechen</button>
-      </div>
+      <p class="hint">In Google Maps: Ort öffnen → <b style="color:var(--fg)">Teilen</b> → Link kopieren. Für die Adresse lange auf die Adresszeile drücken → <b style="color:var(--fg)">Kopieren</b>. Mit Adresse kannst du sie auch offline dem Fahrer zeigen.</p>
+      <button type="button" class="pillbtn" id="btnSaveStay">Speichern<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span></button>
+      <button type="button" class="link quiet" id="btnCancelStay" style="align-self:center">Abbrechen</button>
     </div>
   </section>
 
   <!-- ============ Sätze ============ -->
   <section id="v-phr" hidden>
-    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
-    <h1>Sätze</h1>
-    <p class="hint">Satz antippen, um ihn groß zu zeigen. Mit dem Lautsprecher liest das iPhone ihn auf Vietnamesisch vor.</p>
-    <div class="tip" id="voiceHint" hidden>
-      <strong>Keine vietnamesische Stimme gefunden.</strong> Zum Vorlesen auf dem iPhone einmalig laden (mit WLAN):
-      Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Vietnamesisch → „Linh“ laden. Danach klappt Vorlesen auch offline.
+    <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
+    <h1 class="title">Sätze</h1>
+    <p class="hint">Satz antippen, um ihn groß zu zeigen. Der Lautsprecher liest ihn auf Vietnamesisch vor.</p>
+    <div class="card violet pad cb" id="voiceHint" hidden style="font-size:14px;line-height:1.5">
+      <b>Keine vietnamesische Stimme gefunden.</b> Einmalig laden (mit WLAN): Settings → Accessibility → Spoken Content → Voices → Vietnamese → Linh. Danach klappt Vorlesen auch offline.
     </div>
-    <div id="phraseGroups"></div>
+    <div id="phraseGroups" class="stack"></div>
   </section>
 
   <!-- ============ Speisekarte ============ -->
   <section id="v-menu" hidden>
-    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
-    <h1>Speisekarte</h1>
-    <input type="search" id="menuSearch" class="search" placeholder="Wort von der Karte suchen, z. B. bò" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
+    <h1 class="title">Speisekarte</h1>
+    <input type="search" id="menuSearch" class="txt card" style="border:0;border-radius:999px;padding:15px 20px;font-size:17px" placeholder="Wort von der Karte suchen, z. B. bò" autocomplete="off" autocapitalize="off" spellcheck="false">
     <div class="legend">
-      <span style="--k:var(--ok)"><i></i>okay für euch</span>
-      <span style="--k:var(--no)"><i></i>Fleisch</span>
-      <span style="--k:var(--sea)"><i></i>Meeresfrüchte</span>
-      <span style="--k:var(--info)"><i></i>Zubereitung</span>
+      <span style="background:var(--lime);color:var(--ink)">okay für euch</span>
+      <span style="background:var(--violet);text-decoration:line-through">nicht okay</span>
+      <span style="border:1.5px solid var(--line);color:var(--muted)">Zubereitung</span>
     </div>
     <div id="menuGroups"></div>
-    <p class="empty" id="menuNone" hidden>Nichts gefunden. Tipp: Akzente weglassen geht auch, z. B. „ga“ für gà.</p>
-    <div class="tip"><strong>Tipp:</strong> Restaurants mit <strong>„Quán chay“</strong> oder <strong>„Nhà hàng chay“</strong> im Namen sind rein vegetarisch, oft buddhistisch. Dort ist alles ohne Fleisch, auch die Brühe. Wort antippen, um es vorzulesen.</div>
+    <p class="hint" id="menuNone" hidden>Nichts gefunden. Akzente kannst du weglassen, z. B. „ga“ für gà.</p>
+    <div class="card pad cb" style="font-size:15px;line-height:1.5"><b class="display" style="font-size:19px;font-weight:600">Tipp</b><br>Restaurants mit <b lang="vi">„Quán chay“</b> oder <b lang="vi">„Nhà hàng chay“</b> im Namen sind rein vegetarisch, oft buddhistisch – dort ist alles ohne Fleisch, auch die Brühe. Wort antippen, um es vorzulesen.</div>
   </section>
 
   <!-- ============ Notfall ============ -->
   <section id="v-sos" hidden>
-    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
-    <h1>Notfall</h1>
-    <div class="sos-nums">
+    <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
+    <h1 class="title">Notfall</h1>
+    <div class="card violet sos-nums cb">
       <a class="sos-num" href="tel:113"><b>113</b><span>Polizei</span></a>
       <a class="sos-num" href="tel:114"><b>114</b><span>Feuerwehr</span></a>
       <a class="sos-num" href="tel:115"><b>115</b><span>Rettung</span></a>
     </div>
-    <p class="hint">Antippen ruft direkt an. Am Telefon wird meist nur Vietnamesisch gesprochen – im Zweifel Hotel-Rezeption um Hilfe bitten.</p>
-
+    <p class="hint">Antippen ruft direkt an. Am Telefon wird meist nur Vietnamesisch gesprochen – im Zweifel die Hotel-Rezeption um Hilfe bitten.</p>
     <h2>Deutsche Vertretungen</h2>
-    <div class="row contact">
+    <div class="card pad contact c1">
       <b>Generalkonsulat Ho-Chi-Minh-Stadt</b>
       <span>Deutsches Haus, 33 Lê Duẩn, Quận 1</span>
       <span>Tel. <a href="tel:+842838288100">+84 28 3828 8100</a></span>
       <span>Notfall außerhalb der Öffnungszeiten:<br><a href="tel:+84936342598">+84 93 634 2598</a></span>
     </div>
-    <div class="row contact">
+    <div class="card pad contact cb">
       <b>Botschaft Hanoi</b>
       <span>29 Trần Phú, Ba Đình, Hà Nội</span>
       <span>Tel. <a href="tel:+842432673335">+84 24 3267 3335</a></span>
       <span>Notfall: <a href="tel:+84936342598">+84 93 634 2598</a></span>
     </div>
-
-    <div id="sosPhrases"></div>
+    <div id="sosPhrases" class="stack"></div>
   </section>
 
   <!-- ============ Ausgaben ============ -->
   <section id="v-exp" hidden>
-    <div class="bar-top"><button type="button" class="back" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Übersicht</button></div>
-    <h1>Ausgaben</h1>
-    <div class="row">
-      <label for="expAmt">Neue Ausgabe</label>
+    <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
+    <h1 class="title">Ausgaben</h1>
+    <div class="card pad cb stack">
+      <label class="label" for="expAmt">Neue Ausgabe</label>
       <div class="field">
         <input id="expAmt" class="num vndin" inputmode="numeric" autocomplete="off" placeholder="0">
         <button type="button" class="k000" data-for="expAmt" aria-label="Drei Nullen anhängen">000</button>
         <span class="cur">₫</span>
       </div>
-      <div class="cats" id="expCats" role="group" aria-label="Kategorie"></div>
+      <div class="pills" id="expCats" role="group" aria-label="Kategorie"></div>
       <input id="expNote" class="txt" autocomplete="off" placeholder="Notiz (optional), z. B. Phở, Grab zum Markt">
-      <button type="button" class="primary" id="btnAddExp" disabled>Eintragen</button>
+      <button type="button" class="pillbtn" id="btnAddExp" disabled>Eintragen<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
     </div>
 
-    <div class="totals">
-      <div class="tot"><span class="k">Heute</span><span class="e" id="totToday"></span><span class="v" id="totTodayV"></span></div>
-      <div class="tot"><span class="k">Gesamt</span><span class="e" id="totAll"></span><span class="v" id="totAllV"></span></div>
-      <div class="tot"><span class="k">Ø pro Tag</span><span class="e" id="totAvg"></span><span class="v" id="totAvgV"></span></div>
+    <div class="card lime totals c1">
+      <div class="tot"><span class="label">Heute</span><span class="e" id="totToday"></span><span class="v" id="totTodayV" style="color:#2F4A10"></span></div>
+      <div class="tot" style="border-color:var(--lime-lo)"><span class="label">Gesamt</span><span class="e" id="totAll"></span><span class="v" id="totAllV" style="color:#2F4A10"></span></div>
+      <div class="tot" style="border-color:var(--lime-lo)"><span class="label">Ø pro Tag</span><span class="e" id="totAvg"></span><span class="v" id="totAvgV" style="color:#2F4A10"></span></div>
     </div>
 
-    <div class="row" id="catBox">
+    <div class="card pad cb" id="catBox">
       <span class="label">Nach Kategorie</span>
       <div class="bars" id="bars"></div>
     </div>
 
-    <div id="expList"></div>
+    <div id="expList" class="stack"></div>
     <p class="hint">Euro-Beträge sind mit dem aktuellen Kurs umgerechnet. Die Liste ist nur auf diesem Handy gespeichert.</p>
   </section>
 </main>
 
 <div id="show" hidden role="dialog" aria-modal="true" aria-label="Großanzeige">
-  <span class="s-close">Tippen zum Schließen</span>
+  <span class="s-close card back" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>
   <div class="s-pre" id="sPre" lang="vi"></div>
   <div class="s-vi" id="sVi" lang="vi"></div>
   <div class="s-de" id="sDe"></div>
-  <button type="button" class="s-say" id="sSay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>Vorlesen</button>
+  <button type="button" class="s-say" id="sSay"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></span>Vorlesen</button>
 </div>
 
 <script>
@@ -425,6 +482,11 @@
   const parseEur = s => Number(s.replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '')) || 0;
   const fmtDate = iso => { const [y, m, d] = iso.split('-'); return `${d}.${m}.${y}`; };
   const dayKey = t => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  // Eckenregel für Listen: abwechselnd erste (oben rechts) und zweite (unten links) Karte
+  const corner = i => (i % 2 === 0 ? 'c1' : 'cb');
+  const ICON = {
+    spk: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+  };
 
   /* ---------- Kurs ---------- */
   let rate = 28273.41, rateDate = '2026-11-18', fresh = false;
@@ -459,8 +521,10 @@
     const digits = vnd.value.replace(/\D/g, '');
     vnd.value = digits ? fmtVnd(Number(digits)) : '';
     eur.value = digits ? fmtEur(Number(digits) / rate) : '';
+    markQuick();
   }
-  function fromEur() { vnd.value = eur.value.trim() ? fmtVnd(parseEur(eur.value) * rate) : ''; }
+  function fromEur() { vnd.value = eur.value.trim() ? fmtVnd(parseEur(eur.value) * rate) : ''; markQuick(); }
+  function markQuick() { const n = parseVnd(vnd.value); document.querySelectorAll('#quickConv .pill').forEach(b => b.setAttribute('aria-pressed', Number(b.dataset.v) === n)); }
   vnd.addEventListener('input', fromVnd);
   eur.addEventListener('input', fromEur);
   eur.addEventListener('blur', () => { if (eur.value.trim()) eur.value = fmtEur(parseEur(eur.value)); });
@@ -487,7 +551,6 @@
     synth.speak(u);
     if (!viVoice) { findVoice(); if (!viVoice && synth.getVoices().length) $('voiceHint').hidden = false; }
   }
-  const SPK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
 
   /* ---------- Großanzeige ---------- */
   const show = $('show');
@@ -529,26 +592,30 @@
   const saveStays = () => { store.set('stays', stays); store.set('activeStay', activeStay); };
 
   function showStay(s) {
+    if (!s) return;
     openShow({ pre: 'Xin chở tôi đến địa chỉ này:', vi: [s.name, s.addr].filter(Boolean).join('\n'), de: 'Bitte bringen Sie mich zu dieser Adresse.', mode: 'long' });
   }
+  $('tileStayShow').addEventListener('click', () => { const s = curStay(); if (s) showStay(s); else go('stay'); });
   function renderStays() {
     const list = $('stayList'); list.innerHTML = '';
-    if (!stays.length) { list.innerHTML = '<div class="row"><span class="empty">Noch keine Unterkunft eingetragen.</span></div>'; return; }
+    if (!stays.length) { list.innerHTML = '<div class="card pad cb"><span class="muted">Noch keine Unterkunft eingetragen.</span></div>'; return; }
     const cur = curStay();
-    [cur, ...stays.filter(s => s !== cur)].forEach(s => {
+    [cur, ...stays.filter(s => s !== cur)].forEach((s, idx) => {
       const isCur = s === cur;
-      const r = document.createElement('div'); r.className = 'row stay' + (isCur ? '' : ' other');
-      r.innerHTML = `<div class="stay-head"><span class="stay-name"></span>${isCur ? '<span class="badge">Aktuell</span>' : ''}</div>
-        <div class="stay-addr"></div><div class="actions"></div>`;
+      const r = document.createElement('div'); r.className = `card pad ${isCur ? 'lime' : ''} ${corner(idx)}`;
+      r.innerHTML = `<div class="stay-head"><span class="stay-name"></span>${isCur ? '<span class="badge">Aktuell</span>' : ''}</div><div class="stay-addr"></div><div class="actions"></div>`;
       r.querySelector('.stay-name').textContent = s.name || 'Ohne Namen';
-      r.querySelector('.stay-addr').textContent = s.addr || 'Keine Adresse eingetragen';
+      const addr = r.querySelector('.stay-addr'); addr.textContent = s.addr || 'Keine Adresse eingetragen'; addr.lang = 'vi';
       const a = r.querySelector('.actions');
       const btn = (cls, text, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.textContent = text; b.addEventListener('click', fn); a.appendChild(b); return b; };
-      if (isCur) btn('primary', 'Dem Fahrer zeigen', () => showStay(s));
-      else btn('link', 'Als aktuell setzen', () => { activeStay = s.id; saveStays(); renderStays(); });
+      if (isCur) {
+        const p = document.createElement('button'); p.type = 'button'; p.className = 'pillbtn dark'; p.style.marginBottom = '6px';
+        p.innerHTML = 'Dem Fahrer zeigen<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></span>';
+        p.addEventListener('click', () => showStay(s)); a.appendChild(p);
+      } else btn('link', 'Als aktuell setzen', () => { activeStay = s.id; saveStays(); renderStays(); });
       if (s.map) { const l = document.createElement('a'); l.className = 'link'; l.href = s.map; l.target = '_blank'; l.rel = 'noopener'; l.textContent = 'In Maps öffnen'; a.appendChild(l); }
       btn('link', 'Bearbeiten', () => openStayForm(s));
-      const del = btn('link danger', pendingStayDel === s.id ? 'Wirklich löschen?' : 'Löschen', () => {
+      btn('link ' + (pendingStayDel === s.id ? 'confirm' : 'quiet'), pendingStayDel === s.id ? 'Wirklich löschen?' : 'Löschen', () => {
         if (pendingStayDel === s.id) {
           stays = stays.filter(x => x.id !== s.id); pendingStayDel = null;
           if (activeStay === s.id) activeStay = stays[0] && stays[0].id;
@@ -570,8 +637,7 @@
   $('btnAddStay').addEventListener('click', () => openStayForm(null));
   $('btnCancelStay').addEventListener('click', closeStayForm);
   $('btnSaveStay').addEventListener('click', () => {
-    const raw = $('inMap').value.trim();
-    const m = raw.match(/https?:\/\/\S+/);
+    const m = $('inMap').value.trim().match(/https?:\/\/\S+/);
     const data = { name: $('inName').value.trim(), addr: $('inAddr').value.trim(), map: m ? m[0] : '' };
     if (!data.name && !data.addr && !data.map) { closeStayForm(); return; }
     if (editingStay) Object.assign(editingStay, data);
@@ -637,30 +703,28 @@
   function renderPhrases(container, groups) {
     groups.forEach(g => {
       const h = document.createElement('h2'); h.textContent = g.group; container.appendChild(h);
-      const box = document.createElement('div'); box.className = 'phrases';
-      g.items.forEach(([vi, de]) => {
-        const row = document.createElement('div'); row.className = 'prow';
-        const b = document.createElement('button'); b.type = 'button'; b.className = 'phrase';
+      g.items.forEach(([vi, de], idx) => {
+        const row = document.createElement('div'); row.className = 'card phrase ' + corner(idx);
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'txt';
         b.innerHTML = '<span class="vi" lang="vi"></span><span class="de"></span>';
         b.querySelector('.vi').textContent = vi; b.querySelector('.de').textContent = de;
         b.addEventListener('click', () => openShow({ vi, de, mode: vi.length > 60 ? 'long' : '' }));
         row.appendChild(b);
         if (synth) {
-          const s = document.createElement('button'); s.type = 'button'; s.className = 'spk';
-          s.setAttribute('aria-label', 'Vorlesen'); s.innerHTML = SPK;
+          const s = document.createElement('button'); s.type = 'button'; s.className = 'ic spk';
+          s.setAttribute('aria-label', 'Vorlesen'); s.innerHTML = ICON.spk;
           s.addEventListener('click', () => speak(vi));
           row.appendChild(s);
         }
-        box.appendChild(row);
+        container.appendChild(row);
       });
-      container.appendChild(box);
     });
   }
   renderPhrases($('phraseGroups'), PHRASES);
   renderPhrases($('sosPhrases'), SOS_PHRASES);
 
   /* ---------- Speisekarte ---------- */
-  // k: ok = okay für euch, no = Fleisch, sea = Meeresfrüchte, info = Zubereitung/neutral
+  // k: ok = okay (Lime) · no = nicht okay (Violett, durchgestrichen) · info = Zubereitung (Graphit)
   const MENU = [
     { group: 'Okay für euch', k: 'ok', items: [
       ['chay', 'vegetarisch'], ['đậu hũ / đậu phụ', 'Tofu'], ['nấm', 'Pilze'], ['rau', 'Gemüse'],
@@ -674,7 +738,7 @@
       ['vịt', 'Ente'], ['sườn', 'Rippchen'], ['xá xíu', 'gegrilltes Schwein'], ['chả', 'Fleischpastete / Wurst'],
       ['giò', 'Wurst'], ['nem', 'meist mit Schwein'], ['lòng', 'Innereien'], ['tóp mỡ', 'Grieben (Speck)'],
     ]},
-    { group: 'Meeresfrüchte – nicht okay', k: 'sea', items: [
+    { group: 'Meeresfrüchte – nicht okay', k: 'no', items: [
       ['hải sản', 'Meeresfrüchte'], ['tôm', 'Garnelen'], ['mực', 'Tintenfisch'], ['cua', 'Krabbe'],
       ['ghẹ', 'Schwimmkrabbe'], ['nghêu / sò', 'Muscheln'], ['ốc', 'Meeresschnecken'], ['bạch tuộc', 'Oktopus'],
     ]},
@@ -683,7 +747,7 @@
       ['luộc', 'gekocht'], ['kho', 'geschmort'], ['canh', 'Suppe'], ['lẩu', 'Feuertopf (Hot Pot)'],
       ['gỏi', 'Salat'], ['cuốn', 'Rolle'], ['sốt cà chua', 'in Tomatensoße'], ['tỏi', 'Knoblauch'],
     ]},
-    { group: 'Gerichte zum Bestellen', k: 'ok', wide: true, items: [
+    { group: 'Gerichte zum Bestellen', k: 'ok', full: true, items: [
       ['cơm chay', 'vegetarischer Reisteller'], ['phở chay', 'vegetarische Nudelsuppe'],
       ['bánh mì chay', 'vegetarisches Baguette'], ['gỏi cuốn chay', 'vegetarische Sommerrollen'],
       ['đậu hũ sốt cà chua', 'Tofu in Tomatensoße'], ['rau muống xào tỏi', 'Wasserspinat mit Knoblauch'],
@@ -692,15 +756,15 @@
       ['chả cá', 'gebratener Fisch mit Dill (Hanoi)'],
     ]},
   ];
+  const KIND = { ok: 'lime', no: 'violet no', info: '' };
   const fold = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
-  const menuEls = [];
+  const menuEls = [], menuGrids = [];
   MENU.forEach(g => {
     const wrap = document.createElement('div');
     const h = document.createElement('h2'); h.textContent = g.group; wrap.appendChild(h);
     const grid = document.createElement('div'); grid.className = 'words';
     g.items.forEach(([vi, de]) => {
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'word' + (g.wide ? ' wide' : '');
-      b.style.setProperty('--k', `var(--${g.k})`);
+      const b = document.createElement('button'); b.type = 'button'; b.className = `card word ${KIND[g.k]}${g.full ? ' full' : ''}`;
       b.innerHTML = '<span class="vi" lang="vi"></span><span class="de"></span>';
       b.querySelector('.vi').textContent = vi; b.querySelector('.de').textContent = de;
       b.addEventListener('click', () => speak(vi.replace(/\s*\/\s*/g, ', ')));
@@ -708,24 +772,34 @@
       menuEls.push({ el: b, key: fold(vi + ' ' + de) });
     });
     wrap.appendChild(grid);
+    menuGrids.push({ wrap, grid, full: !!g.full });
     $('menuGroups').appendChild(wrap);
   });
+  // Ecken nach sichtbarer Position: Paare (links oben rechts spitz, rechts unten links spitz); breite Karten abwechselnd
+  function menuCorners() {
+    menuGrids.forEach(({ wrap, grid, full }) => {
+      const vis = [...grid.children].filter(el => !el.hidden);
+      wrap.hidden = !vis.length;
+      vis.forEach((el, i) => { el.classList.remove('c1', 'cb'); el.classList.add(corner(i)); });
+    });
+  }
   $('menuSearch').addEventListener('input', () => {
     const q = fold($('menuSearch').value.trim());
     let any = false;
     menuEls.forEach(m => { const hit = !q || m.key.includes(q); m.el.hidden = !hit; any = any || hit; });
-    $('menuGroups').querySelectorAll(':scope > div').forEach(w => { w.hidden = !w.querySelector('.word:not([hidden])'); });
+    menuCorners();
     $('menuNone').hidden = any;
   });
+  menuCorners();
 
   /* ---------- Ausgaben ---------- */
   const CATS = [
-    { id: 'food', name: 'Essen & Trinken', c: '#e0803a' },
-    { id: 'fun', name: 'Aktivitäten', c: '#3b82c4' },
-    { id: 'trans', name: 'Transport', c: '#7a5cc2' },
-    { id: 'shop', name: 'Einkäufe', c: '#c2477a' },
-    { id: 'well', name: 'Massage & Wellness', c: '#2a9d8f' },
-    { id: 'misc', name: 'Sonstiges', c: '#8a8f8c' },
+    { id: 'food', name: 'Essen & Trinken', c: '#A0FF51' },
+    { id: 'fun', name: 'Aktivitäten', c: '#8466F5' },
+    { id: 'trans', name: 'Transport', c: '#FFFFFF' },
+    { id: 'shop', name: 'Einkäufe', c: '#C6B8FF' },
+    { id: 'well', name: 'Massage & Wellness', c: '#DCFFB8' },
+    { id: 'misc', name: 'Sonstiges', c: '#8C8A96' },
   ];
   const catOf = id => CATS.find(c => c.id === id) || CATS[CATS.length - 1];
   let expenses = store.get('expenses', []);
@@ -753,13 +827,15 @@
   });
 
   function setTot(id, v) { $(id).textContent = fmtEur(v / rate) + ' €'; $(id + 'V').textContent = fmtVnd(v) + ' ₫'; }
-  function renderExp() {
+  function stats() {
     const today = dayKey(Date.now());
     const all = sum(expenses);
     const days = [...new Set(expenses.map(e => dayKey(e.t)))];
-    setTot('totToday', sum(expenses.filter(e => dayKey(e.t) === today)));
-    setTot('totAll', all);
-    setTot('totAvg', days.length ? all / days.length : 0);
+    return { today, all, todaySum: sum(expenses.filter(e => dayKey(e.t) === today)), avg: days.length ? all / days.length : 0 };
+  }
+  function renderExp() {
+    const { today, all, todaySum, avg } = stats();
+    setTot('totToday', todaySum); setTot('totAll', all); setTot('totAvg', avg);
 
     const bars = $('bars'); bars.innerHTML = '';
     const byCat = CATS.map(c => ({ c, v: sum(expenses.filter(e => e.cat === c.id)) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
@@ -776,56 +852,58 @@
 
     const list = $('expList'); list.innerHTML = '';
     if (!expenses.length) {
-      list.innerHTML = '<div class="row"><span class="empty">Noch keine Ausgaben. Betrag eintippen, Kategorie wählen, „Eintragen“ – fertig.</span></div>';
+      list.innerHTML = '<div class="card pad c1"><span class="muted">Noch keine Ausgaben. Betrag eintippen, Kategorie wählen, „Eintragen“ – fertig.</span></div>';
       return;
     }
-    let curDay = null, box = null;
-    [...expenses].sort((a, b) => b.t - a.t).forEach(e => {
-      const dk = dayKey(e.t);
-      if (dk !== curDay) {
-        curDay = dk;
-        const h = document.createElement('div'); h.className = 'day';
-        h.innerHTML = '<span></span><span></span>';
-        h.firstChild.textContent = dk === today ? 'Heute' : new Date(e.t).toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
-        h.lastChild.textContent = fmtEur(sum(expenses.filter(x => dayKey(x.t) === dk)) / rate) + ' €';
-        list.appendChild(h);
-        box = document.createElement('div'); box.className = 'list'; list.appendChild(box);
-      }
-      const c = catOf(e.cat);
-      const it = document.createElement('div'); it.className = 'item';
-      it.innerHTML = `<span class="dot"></span><span class="what"><div class="t1"></div><div class="t2"></div></span><span class="amt"><b></b><small></small></span><button type="button" class="del" aria-label="Eintrag löschen">×</button>`;
-      it.querySelector('.dot').style.setProperty('--c', c.c);
-      it.querySelector('.t1').textContent = e.note || c.name;
-      it.querySelector('.t2').textContent = (e.note ? c.name + ' · ' : '') + new Date(e.t).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-      it.querySelector('.amt b').textContent = fmtVnd(e.amt) + ' ₫';
-      it.querySelector('.amt small').textContent = fmtEur(e.amt / rate) + ' €';
-      const del = it.querySelector('.del');
-      if (pendingDel === e.id) { del.textContent = 'Löschen?'; del.classList.add('confirm'); }
-      del.addEventListener('click', () => {
-        if (pendingDel === e.id) { expenses = expenses.filter(x => x.id !== e.id); store.set('expenses', expenses); pendingDel = null; }
-        else { pendingDel = e.id; setTimeout(() => { if (pendingDel === e.id) { pendingDel = null; renderExp(); } }, 3000); }
-        renderExp();
+    const byDay = {};
+    [...expenses].sort((a, b) => b.t - a.t).forEach(e => { (byDay[dayKey(e.t)] = byDay[dayKey(e.t)] || []).push(e); });
+    Object.keys(byDay).forEach((dk, di) => {
+      const items = byDay[dk];
+      const h = document.createElement('div'); h.className = 'dayhead';
+      h.innerHTML = '<b></b><span></span>';
+      h.firstChild.textContent = dk === today ? 'Heute' : new Date(items[0].t).toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit' });
+      h.lastChild.textContent = fmtEur(sum(items) / rate) + ' €';
+      list.appendChild(h);
+      const box = document.createElement('div'); box.className = 'card pad ' + corner(di);
+      items.forEach(e => {
+        const c = catOf(e.cat);
+        const it = document.createElement('div'); it.className = 'item'; it.style.setProperty('--c', c.c);
+        it.innerHTML = `<span class="dot"></span><span class="what"><div class="t1"></div><div class="t2"></div></span><span class="amt"><b></b><small></small></span><button type="button" class="del" aria-label="Eintrag löschen">×</button>`;
+        it.querySelector('.t1').textContent = e.note || c.name;
+        it.querySelector('.t2').textContent = (e.note ? c.name + ' · ' : '') + new Date(e.t).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        it.querySelector('.amt b').textContent = fmtVnd(e.amt) + ' ₫';
+        it.querySelector('.amt small').textContent = fmtEur(e.amt / rate) + ' €';
+        const del = it.querySelector('.del');
+        if (pendingDel === e.id) { del.textContent = 'Löschen?'; del.classList.add('confirm'); }
+        del.addEventListener('click', () => {
+          if (pendingDel === e.id) { expenses = expenses.filter(x => x.id !== e.id); store.set('expenses', expenses); pendingDel = null; }
+          else { pendingDel = e.id; setTimeout(() => { if (pendingDel === e.id) { pendingDel = null; renderExp(); } }, 3000); }
+          renderExp();
+        });
+        box.appendChild(it);
       });
-      box.appendChild(it);
+      list.appendChild(box);
     });
   }
 
   /* ---------- Startseite ---------- */
   function renderHome() {
-    const st = `1 € = ${fmtVnd(rate)} ₫ · ` + (fresh ? 'Kurs aktuell' : `Kurs vom ${fmtDate(rateDate)}`);
-    $('homeRate').textContent = st; $('homeRate').className = 'sub' + (fresh ? '' : ' offline');
+    $('heroTag').textContent = fresh ? 'Kurs heute · live' : `Kurs vom ${fmtDate(rateDate)} · gespeichert`;
+    $('heroRate').textContent = fmtVnd(rate);
+    $('heroRate2').textContent = fmtEur(100000 / rate);
     const s = curStay(); $('tileStay').textContent = s ? s.name || s.addr : 'Noch keine eingetragen';
-    const t = sum(expenses.filter(e => dayKey(e.t) === dayKey(Date.now())));
-    $('tileExp').textContent = expenses.length ? `Heute ${fmtEur(t / rate)} €` : 'Essen, Aktivitäten, Transport';
+    const { todaySum, avg } = stats();
+    $('tileExp').innerHTML = `${fmtEur(todaySum / rate)}<small> €</small>`;
+    $('tileExpBar').style.width = avg ? Math.min(100, todaySum / avg * 100) + '%' : '0';
+    $('tileExpSub').textContent = expenses.length ? `Ø ${fmtEur(avg / rate)} € pro Tag` : 'Noch nichts eingetragen';
   }
 
   /* ---------- Rendern ---------- */
   function render() {
     $('r1').textContent = fmtVnd(rate);
     $('r2').textContent = fmtEur(100000 / rate);
-    const st = $('status');
-    st.textContent = fresh ? `Kurs vom ${fmtDate(rateDate)}, aktuell` : `Kurs vom ${fmtDate(rateDate)}, gespeichert (offline)`;
-    st.className = fresh ? '' : 'offline';
+    $('status').textContent = fresh ? `Kurs vom ${fmtDate(rateDate)}` : `Kurs vom ${fmtDate(rateDate)}, gespeichert`;
+    const chip = $('convChip'); chip.classList.toggle('off', !fresh); chip.lastChild.textContent = fresh ? 'Kurs aktuell' : 'offline';
     if (document.activeElement === eur) fromEur(); else fromVnd();
     showPrice.dispatchEvent(new Event('change'));
     renderStays(); renderExp(); renderHome();
