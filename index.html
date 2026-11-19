@@ -140,19 +140,19 @@
   }
   body:has(#v-home:not([hidden])) { overflow: hidden; }
   .hello { flex: none; }
-  .hello .l1 { font-family: var(--display); font-size: clamp(36px, 5.8vh, 56px); font-weight: 700; line-height: 0.95; letter-spacing: -0.035em; }
-  .hello .l2, .hello .l3 { font-family: var(--display); font-size: clamp(20px, 3.2vh, 30px); font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; }
+  .hello .l1 { font-family: var(--display); font-size: calc(56px * var(--k)); font-weight: 700; line-height: 0.95; letter-spacing: -0.035em; }
+  .hello .l2, .hello .l3 { font-family: var(--display); font-size: calc(30px * var(--k)); font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; }
   .hello .l2 { margin-top: var(--in); }
   .hello .l3 { display: flex; align-items: center; gap: var(--in); margin-top: 4px; }
   .hello .ring { border: 2px solid var(--fg); border-radius: 999px; padding: 0 12px; }
   .duo { display: inline-flex; margin-left: auto; }
-  .duo span { width: clamp(26px, 3.6vh, 34px); height: clamp(26px, 3.6vh, 34px); border-radius: 50%; }
+  .duo span { width: calc(34px * var(--k)); height: calc(34px * var(--k)); border-radius: 50%; }
   .duo span:first-child { background: var(--lime); }
   .duo span:last-child { background: var(--violet); margin-left: -12px; }
 
   .hero { padding: var(--pad); flex: none; display: flex; flex-direction: column; gap: var(--in); }
   .hero .tag { font-size: var(--t-label); border-left: 3px solid var(--ink); padding-left: var(--in); line-height: 1.2; }
-  .hero .rate { font-family: var(--display); font-size: clamp(34px, 5vh, 48px); font-weight: 700; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .hero .rate { font-family: var(--display); font-size: calc(48px * var(--k)); font-weight: 700; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
   .hero .rate small { font-size: 0.5em; opacity: 0.55; }
   .hero .sub { font-size: var(--t-label); line-height: 1.2; }
 
@@ -170,7 +170,7 @@
   .wide .main { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--gap); background: none; border: 0; padding: 0; text-align: left; cursor: pointer; font: inherit; color: inherit; }
   .wide .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .smallbtn { background: var(--lime); color: var(--ink); border: 0; border-radius: 999px; height: var(--tap); padding: 0 16px; font-weight: 650; font-size: 15px; cursor: pointer; flex: none; }
-  .big-num { font-family: var(--display); font-size: clamp(24px, 3.4vh, 30px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .big-num { font-family: var(--display); font-size: calc(30px * var(--k)); font-weight: 700; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
   .big-num small { font-size: 0.55em; color: var(--muted); font-weight: 500; }
   .track { height: 8px; border-radius: 999px; background: var(--bg); overflow: hidden; flex: none; }
   .track span { display: block; height: 100%; border-radius: 999px; background: var(--fg); }
@@ -250,14 +250,17 @@
   #show .s-say { width: auto; padding-right: 22px; }
   #show .s-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + var(--page)); right: max(var(--page), env(safe-area-inset-right, 0px)); }
 
-  /* Niedrige Bildschirme (z. B. Safari mit Adressleiste): Abstände bleiben gleich, nur Schriftgrößen schrumpfen,
-     und die Zusatzzeile „100.000 ₫ = …“ entfällt – sie steht auch auf der Umrechnen-Seite. */
-  @media (max-height: 800px) {
-    .hello .l1 { font-size: clamp(32px, 4.7vh, 56px); }
-    .hello .l2, .hello .l3 { font-size: clamp(19px, 2.8vh, 30px); }
-    .hero .rate { font-size: clamp(30px, 4.4vh, 48px); }
-    .hero .sub { display: none; }
-  }
+  /* Einpassen: die Startseite misst sich beim Öffnen. Passt nicht alles auf den Bildschirm, werden NUR Schrift- und
+     Symbolgrößen über --k schrittweise verkleinert (min. 70 %) – Abstände bleiben exakt nach Regel.
+     Ab --k < 0,9 entfällt die Zusatzzeile „100.000 ₫ = …“ (steht auch auf der Umrechnen-Seite). */
+  #v-home { --k: 1; }
+  #v-home .tile .ic, #v-home .wide .ic { width: calc(var(--ic) * var(--k)); height: calc(var(--ic) * var(--k)); }
+  #v-home .ctitle { font-size: calc(var(--t-card) * var(--k)); }
+  #v-home .tile .ts, #v-home .label, #v-home .mini span, #v-home .hero .tag { font-size: calc(var(--t-label) * max(var(--k), 0.85)); }
+  #v-home.compact .hero .sub { display: none; }
+  /* Ab --k < 0,8 (sehr niedrige Bildschirme) entfallen Kachel-Untertitel und Beispiel-Pillen – die Titel sind selbsterklärend. */
+  #v-home.tight .tile .ts, #v-home.tight .mini { display: none; }
+  #v-home.tight .ctitle { line-height: 1.05; }
 
   @media (prefers-reduced-motion: reduce) { .tile:active, .pillbtn:active { transform: none; } }
 </style>
@@ -513,7 +516,7 @@
     VIEWS.forEach(v => { $('v-' + v).hidden = v !== name; });
     if (location.hash.slice(1) !== (name === 'home' ? '' : name)) history.replaceState(null, '', name === 'home' ? location.pathname : '#' + name);
     window.scrollTo(0, 0);
-    if (name === 'home') renderHome();
+    if (name === 'home') { renderHome(); fitHome(); }
   }
   document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
   window.addEventListener('hashchange', () => go(location.hash.slice(1)));
@@ -910,6 +913,27 @@
     $('tileExpSub').textContent = expenses.length ? `Ø ${fmtEur(avg / rate)} € pro Tag` : 'Noch nichts eingetragen';
   }
 
+  /* ---------- Startseite einpassen (nie scrollen, nie abschneiden) ---------- */
+  const home = $('v-home');
+  function overflows() {
+    if (home.scrollHeight > home.clientHeight + 1) return true;
+    return [...home.querySelectorAll('.hero, .tile, .wide')].some(t => t.scrollHeight > t.clientHeight + 1);
+  }
+  function fitHome() {
+    if (home.hidden) return;
+    let k = 1;
+    home.classList.remove('compact', 'tight'); home.style.setProperty('--k', k);
+    while (overflows() && k > 0.6) {
+      k = Math.round((k - 0.02) * 100) / 100;
+      home.classList.toggle('compact', k < 0.9);
+      home.classList.toggle('tight', k < 0.8);
+      home.style.setProperty('--k', k);
+    }
+  }
+  window.addEventListener('resize', fitHome);
+  if (window.visualViewport) visualViewport.addEventListener('resize', fitHome);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHome);
+
   /* ---------- Rendern ---------- */
   function render() {
     $('r1').textContent = fmtVnd(rate);
@@ -918,7 +942,7 @@
     const chip = $('convChip'); chip.classList.toggle('off', !fresh); chip.lastChild.textContent = fresh ? 'Kurs aktuell' : 'offline';
     if (document.activeElement === eur) fromEur(); else fromVnd();
     showPrice.dispatchEvent(new Event('change'));
-    renderStays(); renderExp(); renderHome();
+    renderStays(); renderExp(); renderHome(); fitHome();
   }
   render();
   go(location.hash.slice(1));
