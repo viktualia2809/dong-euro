@@ -20,17 +20,30 @@
   @font-face { font-family: 'Bricolage'; src: url(fonts/bricolage-vietnamese.woff2) format('woff2'); font-weight: 200 800; font-display: swap;
     unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
 
-  /* Design-Regeln
-     Farben: Schwarz #1A1A1C · Graphit #2E2E33 · Weiß #FFFFFF · Lime #A0FF51 · Violett #603DF0
-     Ecken:  jede Karte genau eine spitze Ecke (8px), sonst 28px.
-             Große/breite Karten: unten links spitz (.cb). Paare: erste oben rechts (.c1), zweite unten links (.cb).
-     Abheben: Innenschatten mit Lichtkante oben, dunkler Kante unten – farbige Karten im eigenen Ton. */
+  /* ================= DESIGN-REGELN =================
+     FARBE = ROLLE (nie Dekoration)
+       Lime     „Los / Ja / Ergebnis“: die Hauptaktion oder das Hauptergebnis eines Bildschirms + positive Zustände (okay, aktuell, live).
+       Violett  „Achtung“: Notfall, Warnhinweise, „nicht okay“, Löschen bestätigen.
+       Graphit  neutral: Werkzeuge und Inhalte ohne Status.
+       Weiß     Text und Symbole – maximaler Kontrast ohne Wertung. Ausgewählte Pillen = Weiß (Auswahl ist kein „Ja“).
+       Ausnahme: das Kreis-Paar Lime+Violett neben „Việt Nam“ ist das Markenzeichen (steht für die zwei Farben/Währungen).
+     ECKEN: jede Karte genau eine spitze Ecke (8px), Rest 28px. Breite/einzelne Karten unten links (.cb);
+            Paare und Listen abwechselnd oben rechts (.c1) / unten links (.cb). Eingabefelder 12px, Knöpfe/Pillen voll rund.
+     ABHEBEN: Innenschatten – helle Kante oben 3px, dunkle Kante unten 4px, farbige Karten im eigenen Ton.
+     ABSTÄNDE (4er-Raster): Seitenrand 16 · Abstand zwischen Karten 12 · Innenabstand jeder Karte 16 · Abstand innerhalb einer Karte 8 ·
+            Abstand zwischen Pillen/Knöpfen nebeneinander 8 · Zwischenüberschrift: 12 extra Luft darüber.
+     GRÖSSEN: Symbolkreise 40 (nur Anzeige) / 44 (antippbar, Apple-Mindestgröße) · Hauptknopf 56 hoch ·
+            Schrift: Seitentitel 44 · Kartentitel 19 · Eingabe-Zahl 40 · Fließtext 15 · Beschriftung 13.
+  */
   :root {
     --bg: #1A1A1C; --card: #2E2E33; --card-hi: #4B4B53; --card-lo: #151517; --line: #4B4B53;
     --fg: #FFFFFF; --muted: #C9C6D6; --ink: #1A1A1C;
-    --lime: #A0FF51; --lime-hi: #C8FF94; --lime-lo: #6FB82E;
+    --lime: #A0FF51; --lime-hi: #C8FF94; --lime-lo: #6FB82E; --lime-ink2: #2F4A10;
     --violet: #603DF0; --violet-hi: #8466F5; --violet-lo: #3F22B8; --violet-soft: #E6E0FF;
-    --r: 28px; --rs: 8px;
+    --r: 28px; --rs: 8px; --rf: 12px;
+    --page: 16px; --gap: 12px; --pad: 16px; --in: 8px;
+    --ic: 40px; --tap: 44px; --btn: 56px;
+    --t-title: 44px; --t-card: 19px; --t-num: 40px; --t-body: 15px; --t-label: 13px;
     --display: 'Bricolage', -apple-system, 'Helvetica Neue', Arial, sans-serif;
     --font: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
     color-scheme: dark;
@@ -39,212 +52,212 @@
   [hidden] { display: none !important; }
   html, body { margin: 0; min-height: 100%; background: var(--bg); }
   body {
-    color: var(--fg); font-family: var(--font); font-size: 16px;
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
-    padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
+    color: var(--fg); font-family: var(--font); font-size: var(--t-body); line-height: 1.45;
+    padding-left: max(var(--page), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--page), env(safe-area-inset-right, 0px));
+    padding-top: calc(env(safe-area-inset-top, 0px) + var(--page));
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--page));
     -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent;
   }
   main { max-width: 440px; margin: 0 auto; }
-  section { display: flex; flex-direction: column; gap: 14px; }
+  section, .stack { display: flex; flex-direction: column; gap: var(--gap); }
+  .inner { display: flex; flex-direction: column; gap: var(--in); }
   button { font-family: var(--font); touch-action: manipulation; color: inherit; }
-  button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
   .display { font-family: var(--display); }
 
-  /* Karten, Ecken, Abheben */
+  /* Karten */
   .card { background: var(--card); color: var(--fg); box-shadow: inset 0 3px 0 var(--card-hi), inset 0 -4px 0 var(--card-lo); border: 0; }
   .card.lime { background: var(--lime); color: var(--ink); box-shadow: inset 0 3px 0 var(--lime-hi), inset 0 -4px 0 var(--lime-lo); }
   .card.violet { background: var(--violet); color: var(--fg); box-shadow: inset 0 3px 0 var(--violet-hi), inset 0 -4px 0 var(--violet-lo); }
   .cb { border-radius: var(--r) var(--r) var(--r) var(--rs); }
   .c1 { border-radius: var(--r) var(--rs) var(--r) var(--r); }
-  .pad { padding: 16px; }
-  .stack { display: flex; flex-direction: column; gap: 10px; }
+  .pad { padding: var(--pad); }
 
-  .ic { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--fg); color: var(--ink); }
-  .ic svg { width: 20px; height: 20px; }
-  .ic.lime { background: var(--lime); color: var(--ink); }
-  .ic.violet { background: var(--violet); color: var(--fg); }
-  .ic.ink { background: var(--ink); color: var(--lime); }
+  /* Symbolkreise */
+  .ic { width: var(--ic); height: var(--ic); border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--fg); color: var(--ink); border: 0; padding: 0; }
+  .ic svg { width: 50%; height: 50%; }
+  button.ic, .ic.tap { width: var(--tap); height: var(--tap); cursor: pointer; }
+  .card.violet .ic { color: var(--violet); }
 
-  /* Typo */
-  h1.title { font-family: var(--display); font-size: 44px; font-weight: 700; line-height: 0.95; letter-spacing: -0.03em; margin: 4px 0 4px; text-wrap: balance; }
-  h2 { font-family: var(--display); font-size: 21px; font-weight: 500; letter-spacing: -0.01em; margin: 14px 0 -2px; }
+  /* Schrift */
+  h1.title { font-family: var(--display); font-size: var(--t-title); font-weight: 700; line-height: 1; letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: var(--t-card); font-weight: 500; letter-spacing: -0.01em; margin: var(--gap) 0 0; }
   .muted { color: var(--muted); }
-  .small { font-size: 13px; }
-  .hint { font-size: 14px; color: var(--muted); line-height: 1.5; margin: 0; }
-  .label { font-size: 13px; color: var(--muted); }
-  .card.lime .label, .card.lime .muted { color: #2F4A10; }
+  .label { font-size: var(--t-label); color: var(--muted); }
+  .hint { font-size: var(--t-label); color: var(--muted); margin: 0; }
+  .card.lime .label, .card.lime .muted { color: var(--lime-ink2); }
   .card.violet .label, .card.violet .muted { color: var(--violet-soft); }
+  .ctitle { font-family: var(--display); font-size: var(--t-card); font-weight: 500; letter-spacing: -0.01em; line-height: 1.2; }
+  .card b, .hint b { color: inherit; }
 
   /* Kopfzeile Unterseiten */
-  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .back { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; }
+  .back { width: var(--tap); height: var(--tap); border-radius: 50%; display: grid; place-items: center; cursor: pointer; padding: 0; }
   .back svg { width: 22px; height: 22px; }
-  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 12px; }
+  .chip { display: inline-flex; align-items: center; gap: var(--in); font-size: var(--t-label); color: var(--muted); border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 12px; }
   .chip .dotlive { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
   .chip.off .dotlive { background: var(--muted); }
 
   /* Knöpfe */
-  .pillbtn { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; border: 0; border-radius: 999px; padding: 6px 6px 6px 22px; min-height: 56px;
-    background: var(--lime); color: var(--ink); font-weight: 650; font-size: 17px; cursor: pointer; text-align: left; }
-  .pillbtn .ic { width: 44px; height: 44px; background: var(--ink); color: var(--lime); }
+  .pillbtn { display: flex; align-items: center; justify-content: space-between; gap: var(--in); width: 100%; border: 0; border-radius: 999px; padding: 6px 6px 6px 20px; height: var(--btn);
+    background: var(--lime); color: var(--ink); font-weight: 650; font-size: 17px; cursor: pointer; text-align: left; flex: none; }
+  .pillbtn .ic { width: var(--tap); height: var(--tap); background: var(--ink); color: var(--lime); }
   .pillbtn.dark { background: var(--ink); color: var(--lime); }
   .pillbtn.dark .ic { background: var(--lime); color: var(--ink); }
   .pillbtn:disabled { opacity: 0.35; }
   .pillbtn:active { transform: scale(0.985); }
-  .outline { border: 1.5px solid var(--fg); background: transparent; color: var(--fg); border-radius: 999px; padding: 12px 18px; font-weight: 600; font-size: 15px; cursor: pointer; }
-  .link { background: none; border: 0; padding: 6px 0; color: var(--lime); font-weight: 600; font-size: 15px; cursor: pointer; text-decoration: none; }
-  .card.lime .link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
-  .link.quiet { color: var(--muted); font-weight: 500; }
-  .link.confirm { color: var(--fg); background: var(--violet); border-radius: 999px; padding: 6px 12px; }
-  .actions { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
+  .outline { border: 1.5px solid var(--fg); background: transparent; color: var(--fg); border-radius: 999px; height: var(--btn); padding: 0 20px; font-weight: 650; font-size: 17px; cursor: pointer; }
+  .link { background: none; border: 0; padding: 4px 0; color: var(--fg); font-weight: 600; font-size: var(--t-body); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+  .card.lime .link { color: var(--ink); }
+  .link.quiet { color: var(--muted); }
+  .link.confirm { color: var(--fg); background: var(--violet); border-radius: 999px; padding: 4px 12px; text-decoration: none; }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--in) var(--pad); align-items: center; }
 
-  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
-  .pill { font-weight: 550; font-size: 14px; color: var(--fg); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; padding: 9px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+  .pills { display: flex; flex-wrap: wrap; gap: var(--in); }
+  .pill { font-weight: 550; font-size: 14px; color: var(--fg); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; padding: 9px 14px; cursor: pointer; }
   .pill[aria-pressed="true"], .pill:active { background: var(--fg); color: var(--ink); border-color: var(--fg); }
-  .pill .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
 
   /* Eingaben */
-  .field { display: flex; align-items: baseline; gap: 8px; }
-  input.num { flex: 1; min-width: 0; border: 0; background: transparent; color: inherit; font: 700 40px/1.15 var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; padding: 0; outline: none; }
+  .field { display: flex; align-items: center; gap: var(--in); }
+  input.num { flex: 1; min-width: 0; border: 0; background: transparent; color: inherit; font: 700 var(--t-num)/1.15 var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; padding: 0; outline: none; }
   input.num::placeholder { color: var(--line); }
   .card.lime input.num::placeholder { color: var(--lime-lo); }
   .cur { font-size: 22px; font-weight: 500; color: var(--muted); }
-  .card.lime .cur { color: #2F4A10; }
-  .k000 { font-weight: 650; font-size: 14px; color: var(--lime); background: transparent; border: 1.5px solid var(--line); border-radius: 12px; padding: 7px 10px; cursor: pointer; align-self: center; }
-  input.txt, textarea.txt { width: 100%; font: 400 16px var(--font); color: var(--fg); background: var(--bg); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; outline: none; }
-  textarea.txt { resize: vertical; min-height: 70px; }
-  input.txt:focus, textarea.txt:focus { border-color: var(--lime); }
+  .card.lime .cur { color: var(--lime-ink2); }
+  .k000 { font-weight: 650; font-size: 14px; color: var(--fg); background: transparent; border: 1.5px solid var(--line); border-radius: var(--rf); height: 36px; padding: 0 10px; cursor: pointer; }
+  input.txt, textarea.txt { width: 100%; font: 400 16px var(--font); color: var(--fg); background: var(--bg); border: 1.5px solid var(--line); border-radius: var(--rf); padding: 12px 14px; outline: none; }
+  textarea.txt { resize: vertical; min-height: 72px; }
+  input.txt:focus, textarea.txt:focus { border-color: var(--fg); }
   input.txt::placeholder, textarea.txt::placeholder { color: #8C8A96; }
+  input.search { border: 0; border-radius: 999px; height: var(--btn); padding: 0 20px; font-size: 17px; background: var(--card); box-shadow: inset 0 3px 0 var(--card-hi), inset 0 -4px 0 var(--card-lo); }
 
-  /* ---------- Startseite ---------- */
-  .hello { margin: 10px 0 6px; }
-  .hello .l1 { font-family: var(--display); font-size: 62px; font-weight: 700; line-height: 0.95; letter-spacing: -0.035em; }
-  .hello .l2 { font-family: var(--display); font-size: 34px; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; margin-top: 8px; }
-  .hello .l3 { font-family: var(--display); font-size: 34px; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; margin-top: 4px; display: flex; align-items: center; gap: 10px; }
-  .hello .ring { border: 2px solid var(--fg); border-radius: 999px; padding: 0 13px; line-height: 1.2; }
+  /* ---------- Startseite: passt immer auf einen Bildschirm (max. 100dvh) ---------- */
+  #v-home {
+    height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 2 * var(--page));
+    height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 2 * var(--page));
+    overflow: hidden;
+  }
+  body:has(#v-home:not([hidden])) { overflow: hidden; }
+  .hello { flex: none; }
+  .hello .l1 { font-family: var(--display); font-size: clamp(36px, 5.8vh, 56px); font-weight: 700; line-height: 0.95; letter-spacing: -0.035em; }
+  .hello .l2, .hello .l3 { font-family: var(--display); font-size: clamp(20px, 3.2vh, 30px); font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; }
+  .hello .l2 { margin-top: var(--in); }
+  .hello .l3 { display: flex; align-items: center; gap: var(--in); margin-top: 4px; }
+  .hello .ring { border: 2px solid var(--fg); border-radius: 999px; padding: 0 12px; }
   .duo { display: inline-flex; margin-left: auto; }
-  .duo span { width: 36px; height: 36px; border-radius: 50%; }
+  .duo span { width: clamp(26px, 3.6vh, 34px); height: clamp(26px, 3.6vh, 34px); border-radius: 50%; }
   .duo span:first-child { background: var(--lime); }
-  .duo span:last-child { background: var(--violet); margin-left: -13px; display: grid; place-items: center; }
-  .duo svg { width: 18px; height: 18px; }
+  .duo span:last-child { background: var(--violet); margin-left: -12px; }
 
-  .hero { padding: 18px 18px 16px; margin-top: 10px; }
-  .hero .top { display: flex; justify-content: space-between; align-items: center; }
-  .hero .tag { font-size: 13px; border-left: 3px solid var(--violet); padding-left: 8px; }
-  .hero .rate { font-family: var(--display); font-size: 52px; font-weight: 700; letter-spacing: -0.035em; line-height: 1; margin-top: 10px; font-variant-numeric: tabular-nums; }
-  .hero .rate small { font-size: 24px; opacity: 0.55; }
-  .hero .sub { font-size: 13px; margin: 4px 0 14px; }
-  .hero .ic { width: 34px; height: 34px; cursor: pointer; border: 0; }
+  .hero { padding: var(--pad); flex: none; display: flex; flex-direction: column; gap: var(--in); }
+  .hero .tag { font-size: var(--t-label); border-left: 3px solid var(--ink); padding-left: var(--in); line-height: 1.2; }
+  .hero .rate { font-family: var(--display); font-size: clamp(34px, 5vh, 48px); font-weight: 700; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .hero .rate small { font-size: 0.5em; opacity: 0.55; }
+  .hero .sub { font-size: var(--t-label); line-height: 1.2; }
 
-  .bento { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
-  .tile { padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; min-height: 118px; text-align: left; cursor: pointer; font: inherit; }
+  .bento { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto minmax(0, 1fr); gap: var(--gap); }
+  .tile { padding: var(--pad); display: flex; flex-direction: column; justify-content: space-between; gap: var(--in); min-height: 0; text-align: left; cursor: pointer; font: inherit; }
   .tile:active { transform: scale(0.98); }
-  .tile .tt { font-family: var(--display); font-size: 19px; font-weight: 500; letter-spacing: -0.01em; }
-  .tile .ts { font-size: 12.5px; margin-top: 3px; }
-  .tile.tall { grid-row: span 2; min-height: 250px; }
-  .tile.tall .tt { font-size: 27px; }
-  .tile .row1 { display: flex; justify-content: space-between; align-items: flex-start; }
-  .tile .row1 svg.arr { width: 20px; height: 20px; }
-  .mini { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
-  .mini span { border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+  .tile.tall { grid-row: span 2; }
+  .tile .ts { font-size: var(--t-label); line-height: 1.3; color: var(--muted); margin-top: 4px; }
+  .card.violet.tile .ts { color: var(--violet-soft); }
+  .mini { display: flex; gap: var(--in); flex-wrap: wrap; margin-top: var(--in); }
+  .mini span { border-radius: 999px; padding: 4px 10px; font-size: var(--t-label); }
   .mini .on { background: var(--lime); color: var(--ink); }
   .mini .off { border: 1.5px solid var(--fg); }
-  .wide { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 14px 14px 14px 16px; }
-  .wide .main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; font: inherit; color: inherit; }
-  .wide .ic { width: 46px; height: 46px; }
-  .wide .nm { font-family: var(--display); font-size: 19px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .smallbtn { background: var(--lime); color: var(--ink); border: 0; border-radius: 999px; padding: 10px 15px; font-weight: 650; font-size: 14px; cursor: pointer; flex: none; }
-  .big-num { font-family: var(--display); font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
-  .big-num small { font-size: 16px; color: var(--muted); font-weight: 500; }
-  .track { height: 7px; border-radius: 999px; background: var(--bg); overflow: hidden; }
-  .track span { display: block; height: 100%; border-radius: 999px; background: var(--lime); }
+  .wide { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--in); padding: var(--pad); }
+  .wide .main { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--gap); background: none; border: 0; padding: 0; text-align: left; cursor: pointer; font: inherit; color: inherit; }
+  .wide .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .smallbtn { background: var(--lime); color: var(--ink); border: 0; border-radius: 999px; height: var(--tap); padding: 0 16px; font-weight: 650; font-size: 15px; cursor: pointer; flex: none; }
+  .big-num { font-family: var(--display); font-size: clamp(24px, 3.4vh, 30px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .big-num small { font-size: 0.55em; color: var(--muted); font-weight: 500; }
+  .track { height: 8px; border-radius: 999px; background: var(--bg); overflow: hidden; flex: none; }
+  .track span { display: block; height: 100%; border-radius: 999px; background: var(--fg); }
 
   /* ---------- Umrechnen ---------- */
-  .swapbtn { display: flex; justify-content: center; margin: -22px 0; position: relative; z-index: 1; pointer-events: none; }
-  .swapbtn .ic { width: 46px; height: 46px; box-shadow: 0 0 0 6px var(--bg); }
+  .swapbtn { display: flex; justify-content: center; margin: calc(-1 * (var(--ic) / 2 + var(--gap) / 2)) 0; position: relative; z-index: 1; pointer-events: none; }
+  .swapbtn .ic { box-shadow: 0 0 0 6px var(--bg); }
 
   /* ---------- Sätze ---------- */
-  .phrase { display: flex; align-items: center; gap: 10px; padding: 14px 12px 14px 18px; }
-  .phrase .txt { flex: 1; min-width: 0; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: inherit; display: flex; flex-direction: column; gap: 3px; }
-  .phrase .vi { font-family: var(--display); font-size: 19px; font-weight: 500; line-height: 1.3; }
-  .phrase .de { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
-  .phrase .spk { width: 44px; height: 44px; border: 0; cursor: pointer; }
+  .phrase { display: flex; align-items: center; gap: var(--gap); padding: var(--pad); }
+  .phrase .txt { flex: 1; min-width: 0; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: inherit; display: flex; flex-direction: column; gap: 4px; }
+  .phrase .vi { font-family: var(--display); font-size: var(--t-card); font-weight: 500; line-height: 1.3; }
+  .phrase .de { font-size: var(--t-label); color: var(--muted); }
 
   /* ---------- Speisekarte ---------- */
-  .words { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
-  .word { text-align: left; padding: 12px 14px 13px; cursor: pointer; font: inherit; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .word .vi { font-family: var(--display); font-weight: 700; font-size: 19px; overflow-wrap: anywhere; }
-  .word .de { font-size: 12.5px; overflow-wrap: anywhere; }
+  .words { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+  .word { text-align: left; padding: var(--pad); cursor: pointer; font: inherit; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .word .vi { font-family: var(--display); font-weight: 700; font-size: var(--t-card); line-height: 1.2; overflow-wrap: anywhere; }
+  .word .de { font-size: var(--t-label); overflow-wrap: anywhere; color: var(--muted); }
   .word.no .vi { text-decoration: line-through; text-decoration-thickness: 2px; }
   .word.full { grid-column: 1 / -1; }
-  .card.lime.word .de { color: #2F4A10; }
+  .card.lime.word .de { color: var(--lime-ink2); }
   .card.violet.word .de { color: var(--violet-soft); }
-  .card.word:not(.lime):not(.violet) .de { color: var(--muted); }
-  .legend { display: flex; flex-wrap: wrap; gap: 8px; }
-  .legend span { font-size: 13px; border-radius: 999px; padding: 6px 12px; }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--in); }
+  .legend span { font-size: var(--t-label); border-radius: 999px; padding: 6px 12px; }
+  .group { display: flex; flex-direction: column; gap: var(--gap); }
 
   /* ---------- Notfall ---------- */
-  .sos-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 8px; }
-  .sos-num { text-decoration: none; color: var(--fg); text-align: center; padding: 12px 4px; display: flex; flex-direction: column; gap: 2px; }
+  .sos-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: var(--in) 0; }
+  .sos-num { text-decoration: none; color: var(--fg); text-align: center; padding: var(--in) 4px; display: flex; flex-direction: column; gap: 4px; }
   .sos-num + .sos-num { border-left: 1.5px solid var(--violet-hi); }
-  .sos-num b { font-family: var(--display); font-size: 38px; font-weight: 700; letter-spacing: -0.02em; }
-  .sos-num span { font-size: 13px; color: var(--violet-soft); }
-  .contact { display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 1.45; }
-  .contact b { font-family: var(--display); font-size: 19px; font-weight: 500; }
-  .contact a { color: var(--lime); text-decoration: none; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .sos-num b { font-family: var(--display); font-size: var(--t-num); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .sos-num span { font-size: var(--t-label); color: var(--violet-soft); }
+  .contact a { color: var(--fg); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; font-variant-numeric: tabular-nums; }
 
   /* ---------- Unterkunft ---------- */
-  .stay-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-  .stay-name { font-family: var(--display); font-size: 22px; font-weight: 600; line-height: 1.15; }
-  .stay-addr { font-size: 15px; line-height: 1.45; margin: 6px 0 12px; }
-  .badge { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px; background: var(--ink); color: var(--lime); white-space: nowrap; }
+  .stay-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--in); }
+  .badge { font-size: var(--t-label); font-weight: 700; border-radius: 999px; padding: 4px 10px; background: var(--ink); color: var(--lime); white-space: nowrap; }
 
   /* ---------- Ausgaben ---------- */
-  .totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 16px 6px; }
-  .tot { padding: 0 10px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: var(--pad) 0; }
+  .tot { padding: 0 var(--pad); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .tot + .tot { border-left: 1.5px solid var(--line); }
-  .tot .e { font-family: var(--display); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .tot .v { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-  .bars { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
-  .bar { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; font-size: 14px; align-items: center; }
-  .bar .nm { display: flex; align-items: center; gap: 8px; }
-  .bar .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
-  .bar .am { font-variant-numeric: tabular-nums; color: var(--muted); }
-  .bar .tr { grid-column: 1 / -1; height: 7px; background: var(--bg); border-radius: 999px; overflow: hidden; }
-  .bar .tr span { display: block; height: 100%; background: var(--c); border-radius: 999px; }
-  .dayhead { display: flex; justify-content: space-between; align-items: baseline; padding: 0 2px; }
-  .dayhead b { font-family: var(--display); font-size: 19px; font-weight: 500; }
-  .dayhead span { color: var(--muted); font-variant-numeric: tabular-nums; }
-  .item { display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center; padding: 12px 0; border-top: 1.5px solid var(--line); }
-  .item:first-child { border-top: 0; padding-top: 2px; }
-  .item:last-child { padding-bottom: 2px; }
-  .item .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+  .tot .e { font-family: var(--display); font-size: var(--t-card); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tot .v { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .bars { display: flex; flex-direction: column; gap: var(--gap); }
+  .bar { display: grid; grid-template-columns: 1fr auto; gap: 4px var(--in); font-size: var(--t-body); align-items: center; }
+  .bar .am { font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--t-label); }
+  .bar .tr { grid-column: 1 / -1; height: 8px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+  .bar .tr span { display: block; height: 100%; background: var(--fg); border-radius: 999px; }
+  .dayhead { display: flex; justify-content: space-between; align-items: baseline; margin-top: var(--gap); }
+  .dayhead span { color: var(--muted); font-variant-numeric: tabular-nums; font-size: var(--t-label); }
+  .item { display: grid; grid-template-columns: 1fr auto auto; gap: var(--in); align-items: center; padding: var(--gap) 0; border-top: 1.5px solid var(--line); }
+  .item:first-child { border-top: 0; padding-top: 0; }
+  .item:last-child { padding-bottom: 0; }
   .item .what { min-width: 0; }
-  .item .t1 { font-size: 15px; overflow-wrap: anywhere; }
-  .item .t2 { font-size: 12.5px; color: var(--muted); }
+  .item .t1 { overflow-wrap: anywhere; }
+  .item .t2 { font-size: var(--t-label); color: var(--muted); }
   .item .amt { text-align: right; font-variant-numeric: tabular-nums; }
-  .item .amt b { display: block; font-size: 15px; }
-  .item .amt small { font-size: 12.5px; color: var(--muted); }
-  .del { border: 0; background: none; color: var(--muted); font-size: 20px; padding: 4px 6px; cursor: pointer; line-height: 1; }
-  .del.confirm { color: var(--fg); background: var(--violet); border-radius: 999px; font-size: 12px; font-weight: 700; padding: 6px 10px; }
+  .item .amt b { display: block; font-weight: 600; }
+  .item .amt small { font-size: var(--t-label); color: var(--muted); }
+  .del { border: 0; background: none; color: var(--muted); font-size: 22px; width: var(--tap); height: var(--tap); cursor: pointer; line-height: 1; padding: 0; }
+  .del.confirm { color: var(--fg); background: var(--violet); border-radius: 999px; font-size: 12px; font-weight: 700; width: auto; height: 32px; padding: 0 10px; }
 
   /* ---------- Großanzeige ---------- */
   #show {
     position: fixed; inset: 0; z-index: 50; background: var(--bg); color: var(--fg);
-    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; text-align: center;
-    padding: calc(env(safe-area-inset-top, 0px) + 70px) max(24px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 28px) max(24px, env(safe-area-inset-left, 0px));
+    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 24px; text-align: center;
+    padding: calc(env(safe-area-inset-top, 0px) + 76px) max(24px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(24px, env(safe-area-inset-left, 0px));
     cursor: pointer;
   }
   #show .s-pre { font-size: 20px; font-weight: 500; color: var(--muted); }
   #show .s-vi { font-family: var(--display); font-size: clamp(34px, 10vw, 58px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; overflow-wrap: anywhere; white-space: pre-line; }
   #show.price .s-vi { font-size: clamp(60px, 19vw, 120px); font-variant-numeric: tabular-nums; letter-spacing: -0.04em; color: var(--lime); }
   #show.long .s-vi { font-size: clamp(28px, 8vw, 40px); }
-  #show .s-de { font-size: 17px; color: var(--muted); max-width: 32ch; line-height: 1.45; }
-  #show .s-say { display: inline-flex; align-items: center; gap: 10px; font-weight: 650; font-size: 17px; background: var(--lime); color: var(--ink); border: 0; border-radius: 999px; padding: 8px 22px 8px 8px; cursor: pointer; }
-  #show .s-say .ic { width: 42px; height: 42px; background: var(--ink); color: var(--lime); }
-  #show .s-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: max(16px, env(safe-area-inset-right, 0px)); }
+  #show .s-de { font-size: 17px; color: var(--muted); max-width: 32ch; }
+  #show .s-say { width: auto; padding-right: 22px; }
+  #show .s-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + var(--page)); right: max(var(--page), env(safe-area-inset-right, 0px)); }
+
+  /* Niedrige Bildschirme (z. B. Safari mit Adressleiste): Abstände bleiben gleich, nur Schriftgrößen schrumpfen,
+     und die Zusatzzeile „100.000 ₫ = …“ entfällt – sie steht auch auf der Umrechnen-Seite. */
+  @media (max-height: 800px) {
+    .hello .l1 { font-size: clamp(32px, 4.7vh, 56px); }
+    .hello .l2, .hello .l3 { font-size: clamp(19px, 2.8vh, 30px); }
+    .hero .rate { font-size: clamp(30px, 4.4vh, 48px); }
+    .hero .sub { display: none; }
+  }
 
   @media (prefers-reduced-motion: reduce) { .tile:active, .pillbtn:active { transform: none; } }
 </style>
@@ -257,48 +270,45 @@
     <div class="hello">
       <div class="l1">Xin chào,</div>
       <div class="l2">unterwegs in</div>
-      <div class="l3" lang="vi"><span class="ring">Việt</span>Nam<span class="duo" aria-hidden="true"><span></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10h4a2 2 0 0 1 0 4h-4l-4 7h-3l2-7H7l-2 2H2l2-4-2-4h3l2 2h4L9 3h3z"/></svg></span></span></div>
+      <div class="l3" lang="vi"><span class="ring">Việt</span>Nam<span class="duo" aria-hidden="true"><span></span><span></span></span></div>
     </div>
 
     <div class="card lime hero cb">
-      <div class="top">
-        <span class="tag" id="heroTag">Kurs heute</span>
-        <button type="button" class="ic ink" data-go="conv" aria-label="Umrechnen öffnen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></button>
-      </div>
+      <span class="tag" id="heroTag">Kurs heute</span>
       <div class="rate"><span id="heroRate"></span><small> ₫</small></div>
       <div class="sub">für 1 € · 100.000 ₫ = <span id="heroRate2"></span> €</div>
       <button type="button" class="pillbtn dark" data-go="conv">Umrechnen<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg></span></button>
     </div>
 
     <div class="bento">
-      <button type="button" class="card violet tile tall cb" data-go="phr">
-        <span class="row1"><span class="ic lime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H9l-5 4z"/></svg></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
-        <span><span class="tt" style="display:block">Sätze</span><span class="ts muted" style="display:block">Vegetarisch, Kaffee, Handeln</span>
+      <button type="button" class="card tile tall cb" data-go="phr">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H9l-5 4z"/></svg></span>
+        <span><span class="ctitle" style="display:block">Sätze</span><span class="ts" style="display:block">Vegetarisch, Kaffee, Handeln</span>
           <span class="mini" lang="vi"><span class="on">chay</span><span class="off">không đá</span></span></span>
       </button>
       <button type="button" class="card tile c1" data-go="price">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M12 9v6M9.5 10.5h3.5a1.5 1.5 0 0 1 0 3H11"/></svg></span>
-        <span class="tt">Preis zeigen</span>
+        <span class="ctitle">Preis zeigen</span>
       </button>
       <button type="button" class="card tile cb" data-go="menu">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1.5-3 4-3 7h3"/></svg></span>
-        <span class="tt">Speisekarte</span>
+        <span class="ctitle">Speisekarte</span>
       </button>
       <div class="card wide cb">
         <button type="button" class="main" data-go="stay">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
-          <span style="min-width:0"><span class="label" style="display:block">Unterkunft · aktuell</span><span class="nm" id="tileStay" style="display:block"></span></span>
+          <span style="min-width:0"><span class="label" style="display:block">Unterkunft · aktuell</span><span class="ctitle nm" id="tileStay" style="display:block"></span></span>
         </button>
         <button type="button" class="smallbtn" id="tileStayShow">Fahrer</button>
       </div>
       <button type="button" class="card tile c1" data-go="exp">
         <span class="label">Ausgaben heute</span>
         <span class="big-num" id="tileExp"></span>
-        <span><span class="track"><span id="tileExpBar" style="width:0"></span></span><span class="label" id="tileExpSub" style="display:block;margin-top:6px;font-size:12px"></span></span>
+        <span class="track"><span id="tileExpBar" style="width:0"></span></span><span id="tileExpSub" hidden></span>
       </button>
-      <button type="button" class="card tile cb" data-go="sos">
-        <span class="ic violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></span>
-        <span><span class="tt" style="display:block">Notfall</span><span class="ts muted" style="display:block">113 · 114 · 115</span></span>
+      <button type="button" class="card violet tile cb" data-go="sos">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+        <span><span class="ctitle" style="display:block">Notfall</span><span class="ts" style="display:block">113 · 114 · 115</span></span>
       </button>
     </div>
   </section>
@@ -307,7 +317,7 @@
   <section id="v-conv" hidden>
     <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><span class="chip" id="convChip"><span class="dotlive"></span><span></span></span></div>
     <h1 class="title">Umrechnen</h1>
-    <div class="card pad c1">
+    <div class="card pad c1 inner">
       <label class="label" for="vnd">Vietnamesische Dong</label>
       <div class="field">
         <input id="vnd" class="num" inputmode="numeric" autocomplete="off" placeholder="0" value="100.000">
@@ -315,8 +325,8 @@
         <span class="cur">₫</span>
       </div>
     </div>
-    <div class="swapbtn" aria-hidden="true"><span class="ic lime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4v16M8 20l-3-3M8 20l3-3M16 20V4M16 4l-3 3M16 4l3 3"/></svg></span></div>
-    <div class="card lime pad cb">
+    <div class="swapbtn" aria-hidden="true"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4v16M8 20l-3-3M8 20l3-3M16 20V4M16 4l-3 3M16 4l3 3"/></svg></span></div>
+    <div class="card lime pad cb inner">
       <label class="label" for="eur">Euro</label>
       <div class="field">
         <input id="eur" class="num" inputmode="decimal" autocomplete="off" placeholder="0">
@@ -330,11 +340,10 @@
       <button type="button" class="pill" data-v="200000">200.000 ₫</button>
       <button type="button" class="pill" data-v="500000">500.000 ₫</button>
     </div>
-    <p class="hint">1 € = <b id="r1" style="color:var(--fg)"></b> ₫ · 100.000 ₫ = <b id="r2" style="color:var(--fg)"></b> € · <span id="status"></span></p>
-    <div class="card violet pad cb" style="font-size:15px;line-height:1.55">
-      <b class="display" style="font-size:19px;font-weight:600">Vorsicht, leicht zu verwechseln</b><br>
-      20.000 und 500.000 sind beide blau.<br>
-      10.000 und 100.000 – Nullen zählen!<br>
+    <p class="hint">1 € = <b id="r1"></b> ₫ · 100.000 ₫ = <b id="r2"></b> € · <span id="status"></span></p>
+    <div class="card violet pad cb inner">
+      <span class="ctitle">Vorsicht, leicht zu verwechseln</span>
+      <span>20.000 und 500.000 sind beide blau.<br>10.000 und 100.000 – Nullen zählen!</span>
       <span class="muted">Auf Schildern steht oft „k“: 50k = 50.000 ₫.</span>
     </div>
   </section>
@@ -343,14 +352,14 @@
   <section id="v-price" hidden>
     <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
     <h1 class="title">Preis zeigen</h1>
-    <div class="card pad cb">
+    <div class="card pad cb inner">
       <label class="label" for="showPrice">Betrag</label>
       <div class="field">
         <input id="showPrice" class="num vndin" inputmode="numeric" autocomplete="off" placeholder="150.000">
         <button type="button" class="k000" data-for="showPrice" aria-label="Drei Nullen anhängen">000</button>
         <span class="cur">₫</span>
       </div>
-      <div class="label" id="showPriceEur" style="margin-top:4px">&nbsp;</div>
+      <span class="label" id="showPriceEur">&nbsp;</span>
     </div>
     <button type="button" class="pillbtn" id="btnShowPrice" disabled>Groß zeigen<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></span></button>
     <p class="hint">Tipp: „150“ tippen und dann „000“ – das geht schneller als die vielen Nullen. Auf dem großen Bildschirm steht unten auch der Euro-Wert.</p>
@@ -363,15 +372,15 @@
     <div id="stayList" class="stack"></div>
     <button type="button" class="outline" id="btnAddStay">+ Unterkunft hinzufügen</button>
 
-    <div class="card pad cb stack" id="stayForm" hidden>
-      <h2 style="margin:0" id="stayFormTitle">Neue Unterkunft</h2>
+    <div class="card pad cb inner" id="stayForm" hidden>
+      <span class="ctitle" id="stayFormTitle">Neue Unterkunft</span>
       <label class="label" for="inMap">Google-Maps-Link</label>
       <input id="inMap" class="txt" inputmode="url" autocomplete="off" placeholder="https://maps.app.goo.gl/…">
       <label class="label" for="inName">Name</label>
       <input id="inName" class="txt" autocomplete="off" placeholder="Hotel in Hội An">
       <label class="label" for="inAddr">Adresse</label>
       <textarea id="inAddr" class="txt" autocomplete="off" placeholder="Straße, Viertel, Stadt"></textarea>
-      <p class="hint">In Google Maps: Ort öffnen → <b style="color:var(--fg)">Teilen</b> → Link kopieren. Für die Adresse lange auf die Adresszeile drücken → <b style="color:var(--fg)">Kopieren</b>. Mit Adresse kannst du sie auch offline dem Fahrer zeigen.</p>
+      <p class="hint">In Google Maps: Ort öffnen → <b>Teilen</b> → Link kopieren. Für die Adresse lange auf die Adresszeile drücken → <b>Kopieren</b>. Mit Adresse kannst du sie auch offline dem Fahrer zeigen.</p>
       <button type="button" class="pillbtn" id="btnSaveStay">Speichern<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span></button>
       <button type="button" class="link quiet" id="btnCancelStay" style="align-self:center">Abbrechen</button>
     </div>
@@ -382,8 +391,9 @@
     <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
     <h1 class="title">Sätze</h1>
     <p class="hint">Satz antippen, um ihn groß zu zeigen. Der Lautsprecher liest ihn auf Vietnamesisch vor.</p>
-    <div class="card violet pad cb" id="voiceHint" hidden style="font-size:14px;line-height:1.5">
-      <b>Keine vietnamesische Stimme gefunden.</b> Einmalig laden (mit WLAN): Settings → Accessibility → Spoken Content → Voices → Vietnamese → Linh. Danach klappt Vorlesen auch offline.
+    <div class="card violet pad cb inner" id="voiceHint" hidden>
+      <span class="ctitle">Keine vietnamesische Stimme gefunden</span>
+      <span>Einmalig laden (mit WLAN): Settings → Accessibility → Spoken Content → Voices → Vietnamese → Linh. Danach klappt Vorlesen auch offline.</span>
     </div>
     <div id="phraseGroups" class="stack"></div>
   </section>
@@ -392,15 +402,18 @@
   <section id="v-menu" hidden>
     <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
     <h1 class="title">Speisekarte</h1>
-    <input type="search" id="menuSearch" class="txt card" style="border:0;border-radius:999px;padding:15px 20px;font-size:17px" placeholder="Wort von der Karte suchen, z. B. bò" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <input type="search" id="menuSearch" class="txt search" placeholder="Wort von der Karte suchen, z. B. bò" autocomplete="off" autocapitalize="off" spellcheck="false">
     <div class="legend">
       <span style="background:var(--lime);color:var(--ink)">okay für euch</span>
       <span style="background:var(--violet);text-decoration:line-through">nicht okay</span>
       <span style="border:1.5px solid var(--line);color:var(--muted)">Zubereitung</span>
     </div>
-    <div id="menuGroups"></div>
+    <div id="menuGroups" class="stack"></div>
     <p class="hint" id="menuNone" hidden>Nichts gefunden. Akzente kannst du weglassen, z. B. „ga“ für gà.</p>
-    <div class="card pad cb" style="font-size:15px;line-height:1.5"><b class="display" style="font-size:19px;font-weight:600">Tipp</b><br>Restaurants mit <b lang="vi">„Quán chay“</b> oder <b lang="vi">„Nhà hàng chay“</b> im Namen sind rein vegetarisch, oft buddhistisch – dort ist alles ohne Fleisch, auch die Brühe. Wort antippen, um es vorzulesen.</div>
+    <div class="card pad cb inner">
+      <span class="ctitle">Tipp</span>
+      <span>Restaurants mit <b lang="vi">„Quán chay“</b> oder <b lang="vi">„Nhà hàng chay“</b> im Namen sind rein vegetarisch, oft buddhistisch – dort ist alles ohne Fleisch, auch die Brühe. Wort antippen, um es vorzulesen.</span>
+    </div>
   </section>
 
   <!-- ============ Notfall ============ -->
@@ -414,14 +427,14 @@
     </div>
     <p class="hint">Antippen ruft direkt an. Am Telefon wird meist nur Vietnamesisch gesprochen – im Zweifel die Hotel-Rezeption um Hilfe bitten.</p>
     <h2>Deutsche Vertretungen</h2>
-    <div class="card pad contact c1">
-      <b>Generalkonsulat Ho-Chi-Minh-Stadt</b>
+    <div class="card pad contact c1 inner">
+      <span class="ctitle">Generalkonsulat Ho-Chi-Minh-Stadt</span>
       <span>Deutsches Haus, 33 Lê Duẩn, Quận 1</span>
       <span>Tel. <a href="tel:+842838288100">+84 28 3828 8100</a></span>
       <span>Notfall außerhalb der Öffnungszeiten:<br><a href="tel:+84936342598">+84 93 634 2598</a></span>
     </div>
-    <div class="card pad contact cb">
-      <b>Botschaft Hanoi</b>
+    <div class="card pad contact cb inner">
+      <span class="ctitle">Botschaft Hanoi</span>
       <span>29 Trần Phú, Ba Đình, Hà Nội</span>
       <span>Tel. <a href="tel:+842432673335">+84 24 3267 3335</a></span>
       <span>Notfall: <a href="tel:+84936342598">+84 93 634 2598</a></span>
@@ -433,7 +446,7 @@
   <section id="v-exp" hidden>
     <div class="topbar"><button type="button" class="card back" data-go="home" aria-label="Zur Übersicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button></div>
     <h1 class="title">Ausgaben</h1>
-    <div class="card pad cb stack">
+    <div class="card pad cb inner">
       <label class="label" for="expAmt">Neue Ausgabe</label>
       <div class="field">
         <input id="expAmt" class="num vndin" inputmode="numeric" autocomplete="off" placeholder="0">
@@ -445,13 +458,13 @@
       <button type="button" class="pillbtn" id="btnAddExp" disabled>Eintragen<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
     </div>
 
-    <div class="card lime totals c1">
-      <div class="tot"><span class="label">Heute</span><span class="e" id="totToday"></span><span class="v" id="totTodayV" style="color:#2F4A10"></span></div>
-      <div class="tot" style="border-color:var(--lime-lo)"><span class="label">Gesamt</span><span class="e" id="totAll"></span><span class="v" id="totAllV" style="color:#2F4A10"></span></div>
-      <div class="tot" style="border-color:var(--lime-lo)"><span class="label">Ø pro Tag</span><span class="e" id="totAvg"></span><span class="v" id="totAvgV" style="color:#2F4A10"></span></div>
+    <div class="card totals c1">
+      <div class="tot"><span class="label">Heute</span><span class="e" id="totToday"></span><span class="v" id="totTodayV"></span></div>
+      <div class="tot"><span class="label">Gesamt</span><span class="e" id="totAll"></span><span class="v" id="totAllV"></span></div>
+      <div class="tot"><span class="label">Ø pro Tag</span><span class="e" id="totAvg"></span><span class="v" id="totAvgV"></span></div>
     </div>
 
-    <div class="card pad cb" id="catBox">
+    <div class="card pad cb inner" id="catBox">
       <span class="label">Nach Kategorie</span>
       <div class="bars" id="bars"></div>
     </div>
@@ -466,7 +479,7 @@
   <div class="s-pre" id="sPre" lang="vi"></div>
   <div class="s-vi" id="sVi" lang="vi"></div>
   <div class="s-de" id="sDe"></div>
-  <button type="button" class="s-say" id="sSay"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></span>Vorlesen</button>
+  <button type="button" class="pillbtn s-say" id="sSay"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></span>Vorlesen</button>
 </div>
 
 <script>
@@ -602,14 +615,14 @@
     const cur = curStay();
     [cur, ...stays.filter(s => s !== cur)].forEach((s, idx) => {
       const isCur = s === cur;
-      const r = document.createElement('div'); r.className = `card pad ${isCur ? 'lime' : ''} ${corner(idx)}`;
-      r.innerHTML = `<div class="stay-head"><span class="stay-name"></span>${isCur ? '<span class="badge">Aktuell</span>' : ''}</div><div class="stay-addr"></div><div class="actions"></div>`;
+      const r = document.createElement('div'); r.className = `card pad inner ${isCur ? 'lime' : ''} ${corner(idx)}`;
+      r.innerHTML = `<div class="stay-head"><span class="ctitle stay-name"></span>${isCur ? '<span class="badge">Aktuell</span>' : ''}</div><div class="stay-addr"></div><div class="actions"></div>`;
       r.querySelector('.stay-name').textContent = s.name || 'Ohne Namen';
       const addr = r.querySelector('.stay-addr'); addr.textContent = s.addr || 'Keine Adresse eingetragen'; addr.lang = 'vi';
       const a = r.querySelector('.actions');
       const btn = (cls, text, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.textContent = text; b.addEventListener('click', fn); a.appendChild(b); return b; };
       if (isCur) {
-        const p = document.createElement('button'); p.type = 'button'; p.className = 'pillbtn dark'; p.style.marginBottom = '6px';
+        const p = document.createElement('button'); p.type = 'button'; p.className = 'pillbtn dark';
         p.innerHTML = 'Dem Fahrer zeigen<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></span>';
         p.addEventListener('click', () => showStay(s)); a.appendChild(p);
       } else btn('link', 'Als aktuell setzen', () => { activeStay = s.id; saveStays(); renderStays(); });
@@ -760,7 +773,7 @@
   const fold = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
   const menuEls = [], menuGrids = [];
   MENU.forEach(g => {
-    const wrap = document.createElement('div');
+    const wrap = document.createElement('div'); wrap.className = 'group';
     const h = document.createElement('h2'); h.textContent = g.group; wrap.appendChild(h);
     const grid = document.createElement('div'); grid.className = 'words';
     g.items.forEach(([vi, de]) => {
@@ -808,8 +821,7 @@
 
   CATS.forEach(c => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'pill'; b.dataset.cat = c.id;
-    b.innerHTML = '<span class="dot"></span>'; b.querySelector('.dot').style.setProperty('--c', c.c);
-    b.append(c.name);
+    b.textContent = c.name;
     b.addEventListener('click', () => { selCat = c.id; renderCats(); });
     $('expCats').appendChild(b);
   });
@@ -842,9 +854,9 @@
     $('catBox').hidden = !byCat.length;
     const max = byCat.length ? byCat[0].v : 1;
     byCat.forEach(({ c, v }) => {
-      const r = document.createElement('div'); r.className = 'bar'; r.style.setProperty('--c', c.c);
-      r.innerHTML = `<span class="nm"><span class="dot"></span><span></span></span><span class="am"></span><span class="tr"><span></span></span>`;
-      r.querySelector('.nm span:last-child').textContent = c.name;
+      const r = document.createElement('div'); r.className = 'bar';
+      r.innerHTML = `<span class="nm"></span><span class="am"></span><span class="tr"><span></span></span>`;
+      r.querySelector('.nm').textContent = c.name;
       r.querySelector('.am').textContent = `${fmtEur(v / rate)} € · ${Math.round(v / all * 100)} %`;
       r.querySelector('.tr span').style.width = (v / max * 100) + '%';
       bars.appendChild(r);
@@ -860,15 +872,15 @@
     Object.keys(byDay).forEach((dk, di) => {
       const items = byDay[dk];
       const h = document.createElement('div'); h.className = 'dayhead';
-      h.innerHTML = '<b></b><span></span>';
+      h.innerHTML = '<span class="ctitle"></span><span></span>';
       h.firstChild.textContent = dk === today ? 'Heute' : new Date(items[0].t).toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit' });
       h.lastChild.textContent = fmtEur(sum(items) / rate) + ' €';
       list.appendChild(h);
       const box = document.createElement('div'); box.className = 'card pad ' + corner(di);
       items.forEach(e => {
         const c = catOf(e.cat);
-        const it = document.createElement('div'); it.className = 'item'; it.style.setProperty('--c', c.c);
-        it.innerHTML = `<span class="dot"></span><span class="what"><div class="t1"></div><div class="t2"></div></span><span class="amt"><b></b><small></small></span><button type="button" class="del" aria-label="Eintrag löschen">×</button>`;
+        const it = document.createElement('div'); it.className = 'item';
+        it.innerHTML = `<span class="what"><div class="t1"></div><div class="t2"></div></span><span class="amt"><b></b><small></small></span><button type="button" class="del" aria-label="Eintrag löschen">×</button>`;
         it.querySelector('.t1').textContent = e.note || c.name;
         it.querySelector('.t2').textContent = (e.note ? c.name + ' · ' : '') + new Date(e.t).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
         it.querySelector('.amt b').textContent = fmtVnd(e.amt) + ' ₫';
